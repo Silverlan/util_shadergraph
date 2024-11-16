@@ -78,6 +78,6 @@ export namespace pragma::shadergraph {
 
 		MathNode(const std::string_view &type);
 
-		virtual std::string DoEvaluate(const Graph &graph, const NodeInstance &instance) const override;
+		virtual std::string DoEvaluate(const Graph &graph, const GraphNode &instance) const override;
 	};
 };

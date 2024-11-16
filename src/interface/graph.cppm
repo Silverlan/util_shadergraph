@@ -24,17 +24,22 @@ import :graph_node;
 export namespace pragma::shadergraph {
 	class Graph {
 	  public:
+		static constexpr auto PSG_IDENTIFIER = "PSG";
+		static constexpr udm::Version PSG_VERSION = 1;
+
 		Graph(const NodeRegistry &nodeReg);
 		static void Test();
-		std::shared_ptr<NodeInstance> AddNode(const std::string &type);
-		std::vector<NodeInstance *> topologicalSort(const std::vector<std::shared_ptr<NodeInstance>> &nodes);
+		std::shared_ptr<GraphNode> AddNode(const std::string &type);
+		std::shared_ptr<GraphNode> GetNode(const std::string &name);
+		std::vector<GraphNode *> topologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes);
 		void DebugPrint();
 		void FindInvalidLinks();
-		//void ConnectNodes(Node::Ptr outputNode, int outputIndex, Node::Ptr inputNode, int inputIndex) { connections.emplace_back(outputNode, outputIndex, inputNode, inputIndex); }
 		std::string GenerateGLSL();
+		bool Load(udm::LinkedPropertyWrapper &prop, std::string &outErr);
+		bool Save(udm::AssetDataArg outData, std::string &outErr) const;
 	  private:
 		const NodeRegistry &m_nodeRegistry;
-		std::vector<std::shared_ptr<NodeInstance>> m_nodes;
+		std::vector<std::shared_ptr<GraphNode>> m_nodes;
 		std::unordered_map<std::string, size_t> m_nameToNodeIndex;
 	};
 };

@@ -10,22 +10,24 @@ module;
 #include <string>
 #include <cassert>
 #include <stdexcept>
+#include <udm.hpp>
 
 module pragma.shadergraph;
 
 import :graph_node;
 
 using namespace pragma::shadergraph;
-
-OutputTest::OutputTest(NodeInstance &node, uint32_t index) : parent {&node}, outputIndex {index} {}
+#pragma optimize("", off)
+OutputTest::OutputTest(GraphNode &node, uint32_t index) : parent {&node}, outputIndex {index} {}
 const Socket &OutputTest::GetSocket() const { return *parent->node.GetOutput(outputIndex); }
 
-InputTest::InputTest(NodeInstance &node, uint32_t index) : parent {&node}, inputIndex {index}, value {GetSocket().type} {}
+InputTest::InputTest(GraphNode &node, uint32_t index) : parent {&node}, inputIndex {index}, value {GetSocket().type} {}
 InputTest::~InputTest() { ClearValue(); }
 void InputTest::ClearValue() { value.Clear(); }
+bool InputTest::HasValue() const { return value; }
 const Socket &InputTest::GetSocket() const { return *parent->node.GetInput(inputIndex); }
 
-NodeInstance::NodeInstance(Node &node, const std::string &name) : node {node}, m_name {name}
+GraphNode::GraphNode(Graph &graph, Node &node, const std::string &name) : graph {graph}, node {node}, m_name {name}
 {
 	auto &nodeInputs = node.GetInputs();
 	inputs.reserve(nodeInputs.size());
@@ -37,8 +39,8 @@ NodeInstance::NodeInstance(Node &node, const std::string &name) : node {node}, m
 	for(uint32_t i = 0; i < nodeOutputs.size(); ++i)
 		outputs.emplace_back(*this, i);
 }
-std::string NodeInstance::GetName() const { return m_name; }
-void NodeInstance::ClearInputValue(const char *inputName)
+std::string GraphNode::GetName() const { return m_name; }
+void GraphNode::ClearInputValue(const std::string_view &inputName)
 {
 	auto inputIdx = node.FindInputIndex(inputName);
 	if(!inputIdx)
@@ -46,7 +48,7 @@ void NodeInstance::ClearInputValue(const char *inputName)
 	auto &input = inputs[*inputIdx];
 	input.ClearValue();
 }
-bool NodeInstance::Disconnect(const char *inputName)
+bool GraphNode::Disconnect(const std::string_view &inputName)
 {
 	auto inputIdx = node.FindInputIndex(inputName);
 	if(!inputIdx)
@@ -60,7 +62,7 @@ bool NodeInstance::Disconnect(const char *inputName)
 	input.link = nullptr;
 	return true;
 }
-bool NodeInstance::Disconnect(const char *outputName, NodeInstance &linkTarget, const char *inputName)
+bool GraphNode::Disconnect(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName)
 {
 	auto outputIdx = node.FindOutputIndex(outputName);
 	if(!outputIdx)
@@ -76,14 +78,14 @@ bool NodeInstance::Disconnect(const char *outputName, NodeInstance &linkTarget, 
 	link->parent->Disconnect(inputName);
 	return true;
 }
-bool NodeInstance::CanLink(const char *outputName, NodeInstance &linkTarget, const char *inputName) const
+bool GraphNode::CanLink(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName) const
 {
 	if(&linkTarget == this)
 		return false;
 	// TODO: Check if types are compatible
 	return true;
 }
-bool NodeInstance::Link(const char *outputName, NodeInstance &linkTarget, const char *inputName)
+bool GraphNode::Link(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName)
 {
 	if(!CanLink(outputName, linkTarget, inputName))
 		return false;
@@ -103,11 +105,126 @@ bool NodeInstance::Link(const char *outputName, NodeInstance &linkTarget, const 
 	return true;
 }
 
-std::string NodeInstance::GetOutputVarName(size_t outputIdx) const { return "var" + std::to_string(nodeIndex) + "_" + std::to_string(outputIdx); }
-std::string NodeInstance::GetOutputVarName(const std::string_view &name) const
+std::optional<size_t> GraphNode::FindOutputIndex(const std::string_view &name) const
+{
+	auto it = std::find_if(outputs.begin(), outputs.end(), [&name](const OutputTest &output) { return output.GetSocket().name == name; });
+	return (it != outputs.end()) ? (it - outputs.begin()) : std::optional<size_t> {};
+}
+std::optional<size_t> GraphNode::FindInputIndex(const std::string_view &name) const
+{
+	auto it = std::find_if(inputs.begin(), inputs.end(), [&name](const InputTest &input) { return input.GetSocket().name == name; });
+	return (it != inputs.end()) ? (it - inputs.begin()) : std::optional<size_t> {};
+}
+InputTest *GraphNode::FindInput(const std::string_view &name)
+{
+	auto idx = FindInputIndex(name);
+	if(!idx)
+		return nullptr;
+	return GetInput(*idx);
+}
+OutputTest *GraphNode::FindOutput(const std::string_view &name)
+{
+	auto idx = FindOutputIndex(name);
+	if(!idx)
+		return nullptr;
+	return GetOutput(*idx);
+}
+InputTest *GraphNode::GetInput(size_t index) { return (index < inputs.size()) ? &inputs[index] : nullptr; }
+OutputTest *GraphNode::GetOutput(size_t index) { return (index < outputs.size()) ? &outputs[index] : nullptr; }
+bool GraphNode::IsOutputLinked(const std::string_view &name) const
+{
+	auto *output = FindOutput(name);
+	if(!output)
+		return false;
+	return !output->links.empty();
+}
+
+std::string GraphNode::GetOutputVarName(size_t outputIdx) const { return "var" + std::to_string(nodeIndex) + "_" + std::to_string(outputIdx); }
+std::string GraphNode::GetOutputVarName(const std::string_view &name) const
 {
 	auto it = std::find_if(outputs.begin(), outputs.end(), [&name](const OutputTest &output) { return output.GetSocket().name == name; });
 	if(it == outputs.end())
 		throw std::invalid_argument {"No output named '" + std::string {name} + "' exists!"};
 	return GetOutputVarName(it - outputs.begin());
+}
+
+bool GraphNode::LoadFromAssetData(udm::LinkedPropertyWrapper &prop, std::vector<SocketLink> &outLinks, std::string &outErr)
+{
+	prop["displayName"] >> m_displayName;
+
+	auto udmInputs = prop["inputs"];
+	auto numInputs = udmInputs.GetSize();
+	for(size_t idx = 0; idx < numInputs; ++idx) {
+		auto udmInput = udmInputs[idx];
+		std::string inputName;
+		udmInput["input"] >> inputName;
+
+		auto inputIdx = FindInputIndex(inputName);
+		if(!inputIdx)
+			return false;
+		auto *input = GetInput(*inputIdx);
+
+		auto udmValue = udmInput["value"];
+		if(udmValue) {
+			auto res = visit(input->GetSocket().type, [input, &udmValue](auto tag) {
+				using T = typename decltype(tag)::type;
+				T val;
+				if(!udmValue(val))
+					return false;
+				input->SetValue(val);
+				return true;
+			});
+			if(!res)
+				return false;
+		}
+
+		auto udmLink = udmInput["link"];
+		if(udmLink) {
+			if(outLinks.size() == outLinks.capacity())
+				outLinks.reserve(outLinks.size() * 1.5 + 100);
+			outLinks.push_back({});
+			auto &link = outLinks.back();
+			link.inputSocket = input;
+			udmLink["node"] >> link.outputNode;
+			udmLink["output"] >> link.outputName;
+		}
+	}
+	return true;
+}
+
+bool GraphNode::Save(udm::LinkedPropertyWrapper &prop) const
+{
+	prop["name"] << m_name;
+	prop["type"] << node.GetType();
+	prop["displayName"] << m_displayName;
+
+	std::vector<const InputTest *> assignedInputs;
+	assignedInputs.reserve(inputs.size());
+	for(auto &input : inputs) {
+		if(!input.link && !input.HasValue())
+			continue;
+		assignedInputs.push_back(&input);
+	}
+	auto udmInputs = prop.AddArray("inputs", assignedInputs.size());
+	for(size_t idx = 0; idx < assignedInputs.size(); ++idx) {
+		auto *input = assignedInputs[idx];
+		auto udmInput = udmInputs[idx];
+		udmInput["input"] = input->GetSocket().name;
+		if(input->HasValue()) {
+			visit(input->GetSocket().type, [input, &udmInput](auto tag) {
+				using T = typename decltype(tag)::type;
+				T val;
+				if(input->GetValue(val))
+					udmInput["value"] = val;
+			});
+		}
+
+		if(input->link) {
+			auto *output = input->link;
+			auto udmLink = udmInput["link"];
+			udmLink["node"] = output->parent->GetName();
+			udmLink["output"] = output->GetSocket().name;
+		}
+	}
+	return true;
 }

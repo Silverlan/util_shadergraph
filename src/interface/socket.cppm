@@ -15,6 +15,7 @@ module;
 #include <udm_enums.hpp>
 #include <sstream>
 #include <cassert>
+#include <typeinfo>
 
 export module pragma.shadergraph:socket;
 #pragma optimize("", off)
@@ -23,7 +24,6 @@ export namespace pragma::shadergraph {
 		Boolean = 0,
 		Int,
 		UInt,
-		UInt64,
 		Float,
 		Color,
 		Vector,
@@ -33,7 +33,32 @@ export namespace pragma::shadergraph {
 		String,
 		Transform,
 		Enum,
+
+		Invalid = std::numeric_limits<uint8_t>::max(),
 	};
+
+	constexpr SocketType to_socket_type(udm::Type type)
+	{
+		switch(type) {
+		case udm::Type::Boolean:
+			return SocketType::Boolean;
+		case udm::Type::Int32:
+			return SocketType ::Int;
+		case udm::Type::UInt32:
+			return SocketType ::UInt;
+		case udm::Type::Float:
+			return SocketType ::Float;
+		case udm::Type::Vector3:
+			return SocketType::Vector;
+		case udm::Type::Vector2:
+			return SocketType::Point2;
+		case udm::Type::String:
+			return SocketType ::String;
+		case udm::Type::Mat4:
+			return SocketType::Transform;
+		}
+		return SocketType::Invalid;
+	}
 
 	constexpr udm::Type to_udm_type(SocketType type)
 	{
@@ -45,8 +70,6 @@ export namespace pragma::shadergraph {
 			return udm::Type::Int32;
 		case SocketType::UInt:
 			return udm::Type::UInt32;
-		case SocketType::UInt64:
-			return udm::Type::UInt64;
 		case SocketType::Float:
 			return udm::Type::Float;
 		case SocketType::Color:
@@ -59,12 +82,40 @@ export namespace pragma::shadergraph {
 		case SocketType::String:
 			return udm::Type::String;
 		case SocketType::Transform:
-			return udm::Type::Mat3x4;
+			return udm::Type::Mat4;
 		}
 		return udm::Type::Invalid;
 	}
 
-	constexpr std::variant<udm::tag_t<udm::Boolean>, udm::tag_t<udm::Int32>, udm::tag_t<udm::UInt32>, udm::tag_t<udm::UInt64>, udm::tag_t<udm::Float>, udm::tag_t<udm::Vector3>, udm::tag_t<udm::Vector2>, udm::tag_t<udm::String>, udm::tag_t<udm::Transform>, udm::tag_t<udm::Mat3x4>> get_tag(
+	constexpr const char *to_glsl_type(SocketType type)
+	{
+		switch(type) {
+		case SocketType::Boolean:
+			return "bool";
+		case SocketType::Int:
+		case SocketType::Enum:
+			return "int";
+		case SocketType::UInt:
+			return "uint";
+		case SocketType::Float:
+			return "float";
+		case SocketType::Color:
+			return "vec4";
+		case SocketType::Vector:
+		case SocketType::Point:
+		case SocketType::Normal:
+			return "vec3";
+		case SocketType::Point2:
+			return "vec2";
+		case SocketType::Transform:
+			return "mat4";
+		case SocketType::String:
+			return nullptr;
+		}
+		return nullptr;
+	}
+
+	constexpr std::variant<udm::tag_t<udm::Boolean>, udm::tag_t<udm::Int32>, udm::tag_t<udm::UInt32>, udm::tag_t<udm::UInt64>, udm::tag_t<udm::Float>, udm::tag_t<udm::Vector3>, udm::tag_t<udm::Vector2>, udm::tag_t<udm::String>, udm::tag_t<udm::Mat4>> get_tag(
 	  SocketType e)
 	{
 		switch(e) {
@@ -75,8 +126,6 @@ export namespace pragma::shadergraph {
 			return udm::tag<udm::Int32>;
 		case SocketType::UInt:
 			return udm::tag<udm::UInt32>;
-		case SocketType::UInt64:
-			return udm::tag<udm::UInt64>;
 		case SocketType::Float:
 			return udm::tag<udm::Float>;
 		case SocketType::Color:
@@ -89,7 +138,7 @@ export namespace pragma::shadergraph {
 		case SocketType::String:
 			return udm::tag<udm::String>;
 		case SocketType::Transform:
-			return udm::tag<udm::Mat3x4>;
+			return udm::tag<udm::Mat4>;
 		}
 		return {};
 	}
@@ -98,7 +147,7 @@ export namespace pragma::shadergraph {
 	constexpr bool is_socket_type()
 	{
 		return std::is_same_v<T, udm::Boolean> || std::is_same_v<T, udm::Int32> || std::is_same_v<T, udm::UInt32> || std::is_same_v<T, udm::UInt64> || std::is_same_v<T, udm::Float> || std::is_same_v<T, udm::Vector3> || std::is_same_v<T, udm::Vector2> || std::is_same_v<T, udm::String>
-		  || std::is_same_v<T, udm::Mat3x4>;
+		  || std::is_same_v<T, udm::Mat4>;
 	}
 
 	template<typename T>
@@ -108,6 +157,22 @@ export namespace pragma::shadergraph {
 	constexpr decltype(auto) visit(SocketType type, T vs)
 	{
 		return std::visit(vs, get_tag(type));
+	}
+
+	template<typename T>
+	    requires(is_socket_type<T>() && !std::is_same_v<T, udm::String>)
+	std::string to_glsl_value(const T &value)
+	{
+		if constexpr(std::is_same_v<T, udm::Boolean>)
+			return value ? "1.0" : "0.0";
+		else if constexpr(std::is_same_v<T, udm::Int32> || std::is_same_v<T, udm::UInt32> || std::is_same_v<T, udm::UInt64> || std::is_same_v<T, udm::Float>)
+			return std::to_string(value);
+		else if constexpr(std::is_same_v<T, udm::Vector3>)
+			return "vec3(" + std::to_string(value.x) + ", " + std::to_string(value.y) + ", " + std::to_string(value.z) + ")";
+		else if constexpr(std::is_same_v<T, udm::Vector2>)
+			return "vec2(" + std::to_string(value.x) + ", " + std::to_string(value.y) + ")";
+		throw std::invalid_argument {"Socket type '" + std::string {typeid(T).name()} + "' cannot be converted to GLSL!"};
+		return {};
 	}
 
 	struct SocketValue {

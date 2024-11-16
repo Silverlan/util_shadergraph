@@ -26,7 +26,7 @@ MathNode::MathNode(const std::string_view &type) : Node {type}
 	AddOutput(OUT_VALUE, SocketType::Float);
 }
 
-std::string MathNode::DoEvaluate(const Graph &graph, const NodeInstance &instance) const
+std::string MathNode::DoEvaluate(const Graph &graph, const GraphNode &instance) const
 {
 	std::ostringstream code;
 	// TODO

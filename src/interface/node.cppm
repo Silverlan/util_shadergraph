@@ -22,7 +22,7 @@ import :socket;
 #pragma optimize("", off)
 export namespace pragma::shadergraph {
 	class Graph;
-	struct NodeInstance;
+	struct GraphNode;
 	class Node {
 	  public:
 		using Ptr = std::shared_ptr<Node>;
@@ -30,9 +30,9 @@ export namespace pragma::shadergraph {
 		virtual ~Node();
 
 		const std::string_view &GetType() const;
-		std::string GetInputNameOrValue(const NodeInstance &instance, uint32_t inputIdx) const;
-		std::string GetInputNameOrValue(const NodeInstance &instance, const std::string_view &inputName) const;
-		std::string Evaluate(const Graph &graph, const NodeInstance &instance) const;
+		std::string GetInputNameOrValue(const GraphNode &instance, uint32_t inputIdx) const;
+		std::string GetInputNameOrValue(const GraphNode &instance, const std::string_view &inputName) const;
+		std::string Evaluate(const Graph &graph, const GraphNode &instance) const;
 		template<typename TEnum>
 		    requires(std::is_enum_v<TEnum>)
 		void AddSocketEnum(const std::string &name, TEnum defaultVal)
@@ -46,15 +46,15 @@ export namespace pragma::shadergraph {
 		void AddInput(const std::string &name, SocketType type, auto defaultVal);
 		void AddOutput(const std::string &name, SocketType type);
 
-		std::optional<size_t> FindOutputIndex(const std::string &name) const;
-		std::optional<size_t> FindInputIndex(const std::string &name) const;
+		std::optional<size_t> FindOutputIndex(const std::string_view &name) const;
+		std::optional<size_t> FindInputIndex(const std::string_view &name) const;
 		const std::vector<Socket> &GetInputs() const;
 		const std::vector<Socket> &GetOutputs() const;
 		const Socket *GetInput(size_t index) const;
 		const Socket *GetOutput(size_t index) const;
 	  protected:
 		std::string GetUniqueVarName() const;
-		virtual std::string DoEvaluate(const Graph &graph, const NodeInstance &instance) const = 0;
+		virtual std::string DoEvaluate(const Graph &graph, const GraphNode &instance) const = 0;
 
 		std::string_view m_type;
 		std::vector<Socket> m_inputs;

@@ -26,7 +26,12 @@ export namespace pragma::shadergraph {
 		template<typename T>
 		void RegisterNode(const std::string_view &name)
 		{
-			RegisterNode(std::string {name}, std::make_shared<T>(name));
+			RegisterNode(std::make_shared<T>(name));
+		}
+		template<typename T>
+		void RegisterNode(const std::shared_ptr<T> &node)
+		{
+			RegisterNode(std::string {node->GetType()}, node);
 		}
 		const std::shared_ptr<Node> GetNode(const std::string &name) const;
 	  private:

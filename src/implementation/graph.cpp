@@ -39,7 +39,7 @@ void Graph::Test()
 
 	std::string glslCode = graph.GenerateGLSL();
 	std::cout << "Generated GLSL:\n" << glslCode << std::endl;
-	//bool Link(const char *outputName, NodeInstance &linkTarget, const char *inputName)
+	//bool Link(const char *outputName, GraphNode &linkTarget, const char *inputName)
 	//
 	// TODO: Apply operation?
 
@@ -53,7 +53,14 @@ void Graph::Test()
 }
 
 Graph::Graph(const NodeRegistry &nodeReg) : m_nodeRegistry {nodeReg} {}
-std::shared_ptr<NodeInstance> Graph::AddNode(const std::string &type)
+std::shared_ptr<GraphNode> Graph::GetNode(const std::string &name)
+{
+	auto it = m_nameToNodeIndex.find(name);
+	if(it == m_nameToNodeIndex.end())
+		return nullptr;
+	return m_nodes[it->second];
+}
+std::shared_ptr<GraphNode> Graph::AddNode(const std::string &type)
 {
 	auto node = m_nodeRegistry.GetNode(type);
 	if(!node)
@@ -69,16 +76,16 @@ std::shared_ptr<NodeInstance> Graph::AddNode(const std::string &type)
 		++i;
 	}
 
-	auto inst = std::make_shared<NodeInstance>(*node, name);
+	auto inst = std::make_shared<GraphNode>(*this, *node, name);
 	m_nodes.push_back(inst);
 	m_nameToNodeIndex[name] = m_nodes.size() - 1;
 	return inst;
 }
 
-std::vector<NodeInstance *> Graph::topologicalSort(const std::vector<std::shared_ptr<NodeInstance>> &nodes)
+std::vector<GraphNode *> Graph::topologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes)
 {
-	std::unordered_map<NodeInstance *, int> in_degree;
-	std::unordered_map<NodeInstance *, std::vector<NodeInstance *>> adj_list;
+	std::unordered_map<GraphNode *, int> in_degree;
+	std::unordered_map<GraphNode *, std::vector<GraphNode *>> adj_list;
 
 	// Step 1: Initialize in-degree and adjacency list
 	for(const auto &node : nodes) {
@@ -88,7 +95,7 @@ std::vector<NodeInstance *> Graph::topologicalSort(const std::vector<std::shared
 	for(const auto &node : nodes) {
 		for(auto &output : node->outputs) {
 			for(auto *input_link : output.links) {
-				NodeInstance *dependent_node = input_link->parent;
+				GraphNode *dependent_node = input_link->parent;
 
 				// Populate adjacency list and in-degree count
 				adj_list[node.get()].push_back(dependent_node);
@@ -98,7 +105,7 @@ std::vector<NodeInstance *> Graph::topologicalSort(const std::vector<std::shared
 	}
 
 	// Step 2: Collect all nodes with zero in-degree
-	std::queue<NodeInstance *> zero_in_degree_queue;
+	std::queue<GraphNode *> zero_in_degree_queue;
 	for(auto &[node, degree] : in_degree) {
 		if(degree == 0) {
 			zero_in_degree_queue.push(node);
@@ -106,9 +113,9 @@ std::vector<NodeInstance *> Graph::topologicalSort(const std::vector<std::shared
 	}
 
 	// Step 3: Process the nodes in topological order
-	std::vector<NodeInstance *> sorted_nodes;
+	std::vector<GraphNode *> sorted_nodes;
 	while(!zero_in_degree_queue.empty()) {
-		NodeInstance *node = zero_in_degree_queue.front();
+		GraphNode *node = zero_in_degree_queue.front();
 		zero_in_degree_queue.pop();
 		sorted_nodes.push_back(node);
 
@@ -135,7 +142,7 @@ void Graph::DebugPrint()
 	// Print the topologically sorted nodes in order
 	std::cout << "Topological Sort Order:\n";
 	for(const auto *node : sortedNodes) {
-		std::cout << "Node " << node->GetName() << "\n";
+		std::cout << "Node " << node->GetName() << " (" << node->node.GetType() << ")" << "\n";
 
 		// Print Inputs
 		std::cout << "  Inputs:\n";
@@ -191,6 +198,77 @@ void Graph::FindInvalidLinks()
 
 //void ConnectNodes(Node::Ptr outputNode, int outputIndex, Node::Ptr inputNode, int inputIndex) { connections.emplace_back(outputNode, outputIndex, inputNode, inputIndex); }
 
+bool Graph::Load(udm::LinkedPropertyWrapper &prop, std::string &outErr)
+{
+	/*if(data.GetAssetType() != PSG_IDENTIFIER) {
+		outErr = "Incorrect format!";
+		return false;
+	}
+
+	const auto udm = *data;
+	auto version = data.GetAssetVersion();
+	if(version < 1) {
+		outErr = "Invalid version!";
+		return false;
+	}*/
+
+	auto udmNodes = prop["nodes"];
+	auto numNodes = udmNodes.GetSize();
+	std::vector<GraphNode::SocketLink> links;
+	for(size_t idx = 0; idx < numNodes; ++idx) {
+		auto udmNode = udmNodes[idx];
+		std::string type;
+		udmNode["type"] >> type;
+
+		auto node = m_nodeRegistry.GetNode(type);
+		if(!node) {
+			outErr = "Unknown node type '" + type + "'!";
+			return false;
+		}
+
+		std::string name;
+		udmNode["name"] >> name;
+		auto inst = std::make_shared<GraphNode>(*this, *node, name);
+		if(!inst->LoadFromAssetData(udmNode, links, outErr))
+			return false;
+		if(m_nameToNodeIndex.find(name) != m_nameToNodeIndex.end()) {
+			outErr = "Multiple nodes with name '" + name + "'. This is not allowed!";
+			return false;
+		}
+		m_nodes.push_back(inst);
+		m_nameToNodeIndex[name] = m_nodes.size() - 1;
+	}
+
+	for(auto &link : links) {
+		auto node = GetNode(link.outputNode);
+		if(!node)
+			return false;
+		auto *output = node->FindOutput(link.outputName);
+		if(!output)
+			return false;
+		if(!node->Link(link.outputName, *link.inputSocket->parent, link.inputSocket->GetSocket().name))
+			return false;
+	}
+
+	return true;
+}
+
+bool Graph::Save(udm::AssetDataArg outData, std::string &outErr) const
+{
+	outData.SetAssetType(PSG_IDENTIFIER);
+	outData.SetAssetVersion(PSG_VERSION);
+	auto udm = *outData;
+
+	auto udmNodes = udm.AddArray("nodes", m_nodes.size());
+	for(size_t idx = 0; idx < m_nodes.size(); ++idx) {
+
+		auto &node = m_nodes[idx];
+		auto udmGraphNode = udmNodes[idx];
+		node->Save(udmGraphNode);
+	}
+	return true;
+}
+
 std::string Graph::GenerateGLSL()
 {
 	auto sortedNodes = topologicalSort(m_nodes);
@@ -204,7 +282,9 @@ std::string Graph::GenerateGLSL()
 
 	// Traverse nodes and generate GLSL code for each
 	for(const auto &node : sortedNodes) {
+		glslCode << "// " << node->GetName() << " (" << (*node)->GetType() << ")\n";
 		glslCode << node->node.Evaluate(*this, *node);
+		glslCode << "\n";
 	}
 
 	return glslCode.str();
