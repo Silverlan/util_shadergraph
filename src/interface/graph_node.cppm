@@ -23,20 +23,20 @@ import :node;
 #pragma optimize("", off)
 export namespace pragma::shadergraph {
 	struct GraphNode;
-	struct InputTest;
-	struct OutputTest {
-		OutputTest(GraphNode &node, uint32_t index);
+	struct InputSocket;
+	struct OutputSocket {
+		OutputSocket(GraphNode &node, uint32_t index);
 		const Socket &GetSocket() const;
 		GraphNode *parent = nullptr;
-		std::vector<InputTest *> links;
+		std::vector<InputSocket *> links;
 		uint32_t outputIndex = std::numeric_limits<uint32_t>::max();
 	};
 
-	struct InputTest {
-		InputTest(GraphNode &node, uint32_t index);
-		~InputTest();
+	struct InputSocket {
+		InputSocket(GraphNode &node, uint32_t index);
+		~InputSocket();
 		GraphNode *parent = nullptr;
-		OutputTest *link = nullptr;
+		OutputSocket *link = nullptr;
 		uint32_t inputIndex = std::numeric_limits<uint32_t>::max();
 
 		const Socket &GetSocket() const;
@@ -56,13 +56,15 @@ export namespace pragma::shadergraph {
 			std::string outputNode;
 			std::string outputName;
 
-			InputTest *inputSocket;
+			InputSocket *inputSocket;
 		};
 
 		const Node &node;
-		std::vector<InputTest> inputs;
-		std::vector<OutputTest> outputs;
+		std::vector<InputSocket> inputs;
+		std::vector<OutputSocket> outputs;
 		GraphNode(Graph &graph, Node &node, const std::string &name);
+		GraphNode(const GraphNode &) = delete;
+		GraphNode &operator=(const GraphNode &) = delete;
 		const Node *operator->() const { return &node; }
 		std::string GetName() const;
 		void SetDisplayName(const std::optional<std::string> &displayName) { m_displayName = displayName; }
@@ -94,14 +96,14 @@ export namespace pragma::shadergraph {
 		bool IsOutputLinked(const std::string_view &name) const;
 		std::optional<size_t> FindOutputIndex(const std::string_view &name) const;
 		std::optional<size_t> FindInputIndex(const std::string_view &name) const;
-		InputTest *FindInput(const std::string_view &name);
-		OutputTest *FindOutput(const std::string_view &name);
-		const InputTest *FindInput(const std::string_view &name) const { return const_cast<GraphNode *>(this)->FindInput(name); }
-		const OutputTest *FindOutput(const std::string_view &name) const { return const_cast<GraphNode *>(this)->FindOutput(name); }
-		InputTest *GetInput(size_t index);
-		OutputTest *GetOutput(size_t index);
-		const InputTest *GetInput(size_t index) const { return const_cast<GraphNode *>(this)->GetInput(index); }
-		const OutputTest *GetOutput(size_t index) const { return const_cast<GraphNode *>(this)->GetOutput(index); }
+		InputSocket *FindInput(const std::string_view &name);
+		OutputSocket *FindOutput(const std::string_view &name);
+		const InputSocket *FindInput(const std::string_view &name) const { return const_cast<GraphNode *>(this)->FindInput(name); }
+		const OutputSocket *FindOutput(const std::string_view &name) const { return const_cast<GraphNode *>(this)->FindOutput(name); }
+		InputSocket *GetInput(size_t index);
+		OutputSocket *GetOutput(size_t index);
+		const InputSocket *GetInput(size_t index) const { return const_cast<GraphNode *>(this)->GetInput(index); }
+		const OutputSocket *GetOutput(size_t index) const { return const_cast<GraphNode *>(this)->GetOutput(index); }
 
 		std::string GetOutputVarName(size_t outputIdx) const;
 		std::string GetOutputVarName(const std::string_view &name) const;
@@ -116,12 +118,12 @@ export namespace pragma::shadergraph {
 	};
 
 	template<typename T>
-	bool InputTest::SetValue(const T &val)
+	bool InputSocket::SetValue(const T &val)
 	{
 		return value.Set<T>(val);
 	}
 	template<typename T>
-	bool InputTest::GetValue(T &outVal) const
+	bool InputSocket::GetValue(T &outVal) const
 	{
 		if(value)
 			return value.Get<T>(outVal);

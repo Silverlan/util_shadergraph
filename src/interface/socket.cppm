@@ -178,10 +178,12 @@ export namespace pragma::shadergraph {
 	struct SocketValue {
 	  public:
 		SocketValue(const SocketValue &other);
+		SocketValue(SocketValue &&other);
 		SocketValue(SocketType type);
 		~SocketValue();
 
 		SocketValue &operator=(const SocketValue &other);
+		SocketValue &operator=(SocketValue &&other);
 
 		template<typename T>
 		bool Set(const T &val)

@@ -23,6 +23,8 @@ export namespace pragma::shadergraph {
 	class NodeRegistry {
 	  public:
 		NodeRegistry();
+		NodeRegistry(const NodeRegistry &) = delete;
+		NodeRegistry &operator=(const NodeRegistry &) = delete;
 		template<typename T>
 		void RegisterNode(const std::string_view &name)
 		{

@@ -25,8 +25,9 @@ export namespace pragma::shadergraph {
 	struct GraphNode;
 	class Node {
 	  public:
-		using Ptr = std::shared_ptr<Node>;
 		Node(const std::string_view &type);
+		Node(const Node &) = delete;
+		Node &operator=(const Node &) = delete;
 		virtual ~Node();
 
 		const std::string_view &GetType() const;

@@ -27,10 +27,11 @@ export namespace pragma::shadergraph {
 		static constexpr auto PSG_IDENTIFIER = "PSG";
 		static constexpr udm::Version PSG_VERSION = 1;
 
-		Graph(const NodeRegistry &nodeReg);
+		Graph(const std::shared_ptr<NodeRegistry> &nodeReg);
 		static void Test();
 		std::shared_ptr<GraphNode> AddNode(const std::string &type);
 		std::shared_ptr<GraphNode> GetNode(const std::string &name);
+		const std::vector<std::shared_ptr<GraphNode>> &GetNodes() const { return m_nodes; }
 		std::vector<GraphNode *> topologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes);
 		void DebugPrint();
 		void FindInvalidLinks();
@@ -38,7 +39,7 @@ export namespace pragma::shadergraph {
 		bool Load(udm::LinkedPropertyWrapper &prop, std::string &outErr);
 		bool Save(udm::AssetDataArg outData, std::string &outErr) const;
 	  private:
-		const NodeRegistry &m_nodeRegistry;
+		std::shared_ptr<NodeRegistry> m_nodeRegistry;
 		std::vector<std::shared_ptr<GraphNode>> m_nodes;
 		std::unordered_map<std::string, size_t> m_nameToNodeIndex;
 	};

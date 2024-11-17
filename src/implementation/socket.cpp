@@ -19,6 +19,7 @@ import :node_registry;
 using namespace pragma::shadergraph;
 
 SocketValue::SocketValue(const SocketValue &other) : SocketValue {other.m_type} { operator=(other); }
+SocketValue::SocketValue(SocketValue &&other) : SocketValue {other.m_type} { operator=(std::move(other)); }
 SocketValue::SocketValue(SocketType type) : m_type {type} {}
 SocketValue::~SocketValue() { Clear(); }
 
@@ -35,6 +36,16 @@ SocketValue &SocketValue::operator=(const SocketValue &other)
 		assert(res);
 		Set<T>(val);
 	});
+	return *this;
+}
+SocketValue &SocketValue::operator=(SocketValue &&other)
+{
+	Clear();
+	m_type = other.m_type;
+	if(!other)
+		return *this;
+	m_value = other.m_value;
+	other.m_value = nullptr;
 	return *this;
 }
 

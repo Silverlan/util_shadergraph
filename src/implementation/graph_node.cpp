@@ -18,14 +18,14 @@ import :graph_node;
 
 using namespace pragma::shadergraph;
 #pragma optimize("", off)
-OutputTest::OutputTest(GraphNode &node, uint32_t index) : parent {&node}, outputIndex {index} {}
-const Socket &OutputTest::GetSocket() const { return *parent->node.GetOutput(outputIndex); }
+OutputSocket::OutputSocket(GraphNode &node, uint32_t index) : parent {&node}, outputIndex {index} {}
+const Socket &OutputSocket::GetSocket() const { return *parent->node.GetOutput(outputIndex); }
 
-InputTest::InputTest(GraphNode &node, uint32_t index) : parent {&node}, inputIndex {index}, value {GetSocket().type} {}
-InputTest::~InputTest() { ClearValue(); }
-void InputTest::ClearValue() { value.Clear(); }
-bool InputTest::HasValue() const { return value; }
-const Socket &InputTest::GetSocket() const { return *parent->node.GetInput(inputIndex); }
+InputSocket::InputSocket(GraphNode &node, uint32_t index) : parent {&node}, inputIndex {index}, value {GetSocket().type} {}
+InputSocket::~InputSocket() { ClearValue(); }
+void InputSocket::ClearValue() { value.Clear(); }
+bool InputSocket::HasValue() const { return value; }
+const Socket &InputSocket::GetSocket() const { return *parent->node.GetInput(inputIndex); }
 
 GraphNode::GraphNode(Graph &graph, Node &node, const std::string &name) : graph {graph}, node {node}, m_name {name}
 {
@@ -71,7 +71,7 @@ bool GraphNode::Disconnect(const std::string_view &outputName, GraphNode &linkTa
 	if(!inputIdx)
 		return false;
 	auto &output = outputs.at(*outputIdx);
-	auto it = std::find_if(output.links.begin(), output.links.end(), [&linkTarget, &inputIdx](const InputTest *input) { return input->parent == &linkTarget && input->inputIndex == *inputIdx; });
+	auto it = std::find_if(output.links.begin(), output.links.end(), [&linkTarget, &inputIdx](const InputSocket *input) { return input->parent == &linkTarget && input->inputIndex == *inputIdx; });
 	if(it == output.links.end())
 		return false;
 	auto &link = *it;
@@ -107,30 +107,30 @@ bool GraphNode::Link(const std::string_view &outputName, GraphNode &linkTarget, 
 
 std::optional<size_t> GraphNode::FindOutputIndex(const std::string_view &name) const
 {
-	auto it = std::find_if(outputs.begin(), outputs.end(), [&name](const OutputTest &output) { return output.GetSocket().name == name; });
+	auto it = std::find_if(outputs.begin(), outputs.end(), [&name](const OutputSocket &output) { return output.GetSocket().name == name; });
 	return (it != outputs.end()) ? (it - outputs.begin()) : std::optional<size_t> {};
 }
 std::optional<size_t> GraphNode::FindInputIndex(const std::string_view &name) const
 {
-	auto it = std::find_if(inputs.begin(), inputs.end(), [&name](const InputTest &input) { return input.GetSocket().name == name; });
+	auto it = std::find_if(inputs.begin(), inputs.end(), [&name](const InputSocket &input) { return input.GetSocket().name == name; });
 	return (it != inputs.end()) ? (it - inputs.begin()) : std::optional<size_t> {};
 }
-InputTest *GraphNode::FindInput(const std::string_view &name)
+InputSocket *GraphNode::FindInput(const std::string_view &name)
 {
 	auto idx = FindInputIndex(name);
 	if(!idx)
 		return nullptr;
 	return GetInput(*idx);
 }
-OutputTest *GraphNode::FindOutput(const std::string_view &name)
+OutputSocket *GraphNode::FindOutput(const std::string_view &name)
 {
 	auto idx = FindOutputIndex(name);
 	if(!idx)
 		return nullptr;
 	return GetOutput(*idx);
 }
-InputTest *GraphNode::GetInput(size_t index) { return (index < inputs.size()) ? &inputs[index] : nullptr; }
-OutputTest *GraphNode::GetOutput(size_t index) { return (index < outputs.size()) ? &outputs[index] : nullptr; }
+InputSocket *GraphNode::GetInput(size_t index) { return (index < inputs.size()) ? &inputs[index] : nullptr; }
+OutputSocket *GraphNode::GetOutput(size_t index) { return (index < outputs.size()) ? &outputs[index] : nullptr; }
 bool GraphNode::IsOutputLinked(const std::string_view &name) const
 {
 	auto *output = FindOutput(name);
@@ -142,7 +142,7 @@ bool GraphNode::IsOutputLinked(const std::string_view &name) const
 std::string GraphNode::GetOutputVarName(size_t outputIdx) const { return "var" + std::to_string(nodeIndex) + "_" + std::to_string(outputIdx); }
 std::string GraphNode::GetOutputVarName(const std::string_view &name) const
 {
-	auto it = std::find_if(outputs.begin(), outputs.end(), [&name](const OutputTest &output) { return output.GetSocket().name == name; });
+	auto it = std::find_if(outputs.begin(), outputs.end(), [&name](const OutputSocket &output) { return output.GetSocket().name == name; });
 	if(it == outputs.end())
 		throw std::invalid_argument {"No output named '" + std::string {name} + "' exists!"};
 	return GetOutputVarName(it - outputs.begin());
@@ -198,7 +198,7 @@ bool GraphNode::Save(udm::LinkedPropertyWrapper &prop) const
 	prop["type"] << node.GetType();
 	prop["displayName"] << m_displayName;
 
-	std::vector<const InputTest *> assignedInputs;
+	std::vector<const InputSocket *> assignedInputs;
 	assignedInputs.reserve(inputs.size());
 	for(auto &input : inputs) {
 		if(!input.link && !input.HasValue())

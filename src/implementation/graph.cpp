@@ -23,8 +23,8 @@ using namespace pragma::shadergraph;
 
 void Graph::Test()
 {
-	NodeRegistry reg {};
-	reg.RegisterNode<MathNode>("math");
+	auto reg = std::make_shared < NodeRegistry>();
+	reg->RegisterNode<MathNode>("math");
 
 	// Create graph
 	Graph graph {reg};
@@ -52,7 +52,7 @@ void Graph::Test()
 	//std::cout << "Generated GLSL:\n" << glslCode << std::endl;
 }
 
-Graph::Graph(const NodeRegistry &nodeReg) : m_nodeRegistry {nodeReg} {}
+Graph::Graph(const std::shared_ptr<NodeRegistry> &nodeReg) : m_nodeRegistry {nodeReg} {}
 std::shared_ptr<GraphNode> Graph::GetNode(const std::string &name)
 {
 	auto it = m_nameToNodeIndex.find(name);
@@ -62,7 +62,7 @@ std::shared_ptr<GraphNode> Graph::GetNode(const std::string &name)
 }
 std::shared_ptr<GraphNode> Graph::AddNode(const std::string &type)
 {
-	auto node = m_nodeRegistry.GetNode(type);
+	auto node = m_nodeRegistry->GetNode(type);
 	if(!node)
 		return nullptr;
 	std::string name = type;
@@ -220,7 +220,7 @@ bool Graph::Load(udm::LinkedPropertyWrapper &prop, std::string &outErr)
 		std::string type;
 		udmNode["type"] >> type;
 
-		auto node = m_nodeRegistry.GetNode(type);
+		auto node = m_nodeRegistry->GetNode(type);
 		if(!node) {
 			outErr = "Unknown node type '" + type + "'!";
 			return false;
