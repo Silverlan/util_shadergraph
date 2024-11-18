@@ -31,6 +31,7 @@ export namespace pragma::shadergraph {
 		static void Test();
 		std::shared_ptr<GraphNode> AddNode(const std::string &type);
 		std::shared_ptr<GraphNode> GetNode(const std::string &name);
+		bool RemoveNode(const std::string &name);
 		const std::vector<std::shared_ptr<GraphNode>> &GetNodes() const { return m_nodes; }
 		std::vector<GraphNode *> topologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes);
 		void DebugPrint();

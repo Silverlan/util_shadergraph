@@ -23,7 +23,7 @@ using namespace pragma::shadergraph;
 
 void Graph::Test()
 {
-	auto reg = std::make_shared < NodeRegistry>();
+	auto reg = std::make_shared<NodeRegistry>();
 	reg->RegisterNode<MathNode>("math");
 
 	// Create graph
@@ -59,6 +59,24 @@ std::shared_ptr<GraphNode> Graph::GetNode(const std::string &name)
 	if(it == m_nameToNodeIndex.end())
 		return nullptr;
 	return m_nodes[it->second];
+}
+bool Graph::RemoveNode(const std::string &name)
+{
+	auto it = m_nameToNodeIndex.find(name);
+	if(it == m_nameToNodeIndex.end())
+		return false;
+	auto idx = it->second;
+	auto &node = m_nodes.at(idx);
+	node->DisconnectAll();
+	m_nameToNodeIndex.erase(it);
+	m_nodes.erase(m_nodes.begin() + idx);
+	for(auto &[name, idxOther] : m_nameToNodeIndex) {
+		if(idxOther > idx) {
+			--idxOther;
+			m_nodes.at(idxOther)->nodeIndex = idxOther;
+		}
+	}
+	return true;
 }
 std::shared_ptr<GraphNode> Graph::AddNode(const std::string &type)
 {
