@@ -24,6 +24,9 @@ import :graph_node;
 export namespace pragma::shadergraph {
 	class Graph {
 	  public:
+		static constexpr auto EXTENSION_BINARY = "psg_b";
+		static constexpr auto EXTENSION_ASCII = "psg";
+
 		static constexpr auto PSG_IDENTIFIER = "PSG";
 		static constexpr udm::Version PSG_VERSION = 1;
 
