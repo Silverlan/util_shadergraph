@@ -11,6 +11,7 @@ module;
 #include <string_view>
 #include <stdexcept>
 #include <typeinfo>
+#include <algorithm>
 #include <sharedutils/magic_enum.hpp>
 
 module pragma.shadergraph;
