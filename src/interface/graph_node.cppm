@@ -88,6 +88,7 @@ export namespace pragma::shadergraph {
 			return input.GetValue<T>(outVal);
 		}
 		void ClearInputValue(const std::string_view &inputName);
+		void DisconnectAll();
 		bool Disconnect(const std::string_view &inputName);
 		bool Disconnect(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName);
 		bool CanLink(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName) const;

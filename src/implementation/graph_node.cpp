@@ -48,6 +48,26 @@ void GraphNode::ClearInputValue(const std::string_view &inputName)
 	auto &input = inputs[*inputIdx];
 	input.ClearValue();
 }
+void GraphNode::DisconnectAll()
+{
+	for(auto &input : inputs) {
+		if(!input.link)
+			continue;
+		auto &socketName = input.GetSocket().name;
+		if(!Disconnect(socketName))
+			throw std::runtime_error {"Failed to disconnect input socket '" + socketName + "'!"};
+	}
+	for(auto &output : outputs) {
+		while(!output.links.empty()) {
+			auto *link = output.links.front();
+			auto n = output.links.size();
+			auto &socketName = link->GetSocket().name;
+			auto res = link->parent->Disconnect(socketName);
+			if(!res || output.links.size() >= n)
+				throw std::runtime_error {"Failed to disconnect output to input socket '" + socketName + "'!"};
+		}
+	}
+}
 bool GraphNode::Disconnect(const std::string_view &inputName)
 {
 	auto inputIdx = node.FindInputIndex(inputName);
