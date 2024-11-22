@@ -26,29 +26,146 @@ MathNode::MathNode(const std::string_view &type) : Node {type}
 	AddOutput(OUT_VALUE, SocketType::Float);
 }
 
-std::string MathNode::DoEvaluate(const Graph &graph, const GraphNode &instance) const
+std::string MathNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 {
 	std::ostringstream code;
-	// TODO
-	code << "float " << instance.GetOutputVarName(OUT_VALUE) << " = ";
-
-	//instance.inputs[0].link
-	//instance.inputs[0].inputIndex;
-	code << "(" << GetInputNameOrValue(instance, IN_VALUE1) << " ";
-	switch(Operation::Add) {
+	code << gn.GetGlslOutputDeclaration(OUT_VALUE) << " = ";
+	auto v1 = gn.GetInputNameOrValue(IN_VALUE1);
+	auto v2 = gn.GetInputNameOrValue(IN_VALUE2);
+	auto v3 = gn.GetInputNameOrValue(IN_VALUE3);
+	auto op = *gn.GetConstantInputValue<Operation>(IN_OPERATION);
+	switch(op) {
 	case Operation::Add:
-		code << "+";
+		code << v1 << " + " << v2;
 		break;
 	case Operation::Subtract:
-		code << "-";
+		code << v1 << " - " << v2;
 		break;
 	case Operation::Multiply:
-		code << "*";
+		code << v1 << " * " << v2;
 		break;
 	case Operation::Divide:
-		code << "/";
+		code << v1 << " / " << v2;
+		break;
+	case Operation::MultiplyAdd:
+		code << v1 << " * " << v2 << " + " << v3;
+		break;
+	case Operation::Sine:
+		code << "sin(" << v1 << ")";
+		break;
+	case Operation::Cosine:
+		code << "cos(" << v1 << ")";
+		break;
+	case Operation::Tangent:
+		code << "tan(" << v1 << ")";
+		break;
+	case Operation::SinH:
+		code << "sinh(" << v1 << ")";
+		break;
+	case Operation::CosH:
+		code << "cosh(" << v1 << ")";
+		break;
+	case Operation::TanH:
+		code << "tanh(" << v1 << ")";
+		break;
+	case Operation::ArcSine:
+		code << "asin(" << v1 << ")";
+		break;
+	case Operation::ArcCosine:
+		code << "acos(" << v1 << ")";
+		break;
+	case Operation::ArcTangent:
+		code << "atan(" << v1 << ")";
+		break;
+	case Operation::Power:
+		code << "pow(" << v1 << ", " << v2 << ")";
+		break;
+	case Operation::Logarithm:
+		code << "log(" << v1 << ")";
+		break;
+	case Operation::Minimum:
+		code << "min(" << v1 << ", " << v2 << ")";
+		break;
+	case Operation::Maximum:
+		code << "max(" << v1 << ", " << v2 << ")";
+		break;
+	case Operation::Round:
+		code << "round(" << v1 << ")";
+		break;
+	case Operation::LessThan:
+		code << "max(sign(" << v2 << " -" << v1 << "), 0.0)";
+		break;
+	case Operation::GreaterThan:
+		code << "max(sign(" << v1 << " -" << v2 << "), 0.0)";
+		break;
+	case Operation::Modulo:
+		code << "mod(" << v1 << ", " << v2 << ")";
+		break;
+	case Operation::FlooredModulo:
+		code << "floored_modulo(" << v1 << ", " << v2 << ")";
+		break;
+	case Operation::Absolute:
+		code << "abs(" << v1 << ")";
+		break;
+	case Operation::ArcTan2:
+		code << "atan(" << v1 << ", " << v2 << ")";
+		break;
+	case Operation::Floor:
+		code << "floor(" << v1 << ")";
+		break;
+	case Operation::Ceil:
+		code << "ceil(" << v1 << ")";
+		break;
+	case Operation::Fraction:
+		code << "fract(" << v1 << ")";
+		break;
+	case Operation::Trunc:
+		code << "trunc(" << v1 << ")";
+		break;
+	case Operation::Snap:
+		code << "floor(" << v1 << " /" << v2 << ") *" << v2;
+		break;
+	case Operation::Wrap:
+		code << "wrap(" << v1 << ", " << v2 << ", " << v3 << ")";
+		break;
+	case Operation::PingPong:
+		code << "pingpong(" << v1 << ", " << v2 << ")";
+		break;
+	case Operation::Sqrt:
+		code << "sqrt(" << v1 << ")";
+		break;
+	case Operation::InverseSqrt:
+		code << "inversesqrt(" << v1 << ")";
+		break;
+	case Operation::Sign:
+		code << "sign(" << v1 << ")";
+		break;
+	case Operation::Exponent:
+		code << "exp(" << v1 << ")";
+		break;
+	case Operation::Radians:
+		code << "radians(" << v1 << ")";
+		break;
+	case Operation::Degrees:
+		code << "degrees(" << v1 << ")";
+		break;
+	case Operation::SmoothMin:
+		code << "smoothmin(" << v1 << ", " << v2 << ", " << v3 << ")";
+		break;
+	case Operation::SmoothMax:
+		code << "-smoothmin(-" << v1 << ", -" << v2 << ", " << v3 << ")";
+		break;
+	case Operation::Compare:
+		code << "((" << v1 << " == " << v2 << ") || (abs(" << v1 << " -" << v2 << ") <= max(" << v3 << ", FLT_EPSILON))) ? 1.0 : 0.0";
 		break;
 	}
-	code << " " << GetInputNameOrValue(instance, IN_VALUE2) << ");\n";
+	code << ";\n";
+
+	auto clamp = gn.GetInputNameOrValue(IN_CLAMP);
+	auto constClamp = gn.GetConstantInputValue<bool>(IN_CLAMP);
+	if(!constClamp.has_value() || *constClamp) {
+		auto outVarName = gn.GetOutputVarName(OUT_VALUE);
+		code << outVarName << " = " << clamp << " ? clamp(" << outVarName << ", 0.0, 1.0) : " << outVarName << ";\n";
+	}
 	return code.str();
 }

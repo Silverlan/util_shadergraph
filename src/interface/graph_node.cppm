@@ -87,6 +87,49 @@ export namespace pragma::shadergraph {
 			auto &input = inputs[*inputIdx];
 			return input.GetValue<T>(outVal);
 		}
+
+		std::string GetInputNameOrValue(uint32_t inputIdx) const { return node.GetInputNameOrValue(*this, inputIdx); }
+		std::string GetInputNameOrValue(const std::string_view &inputName) const { return node.GetInputNameOrValue(*this, inputName); }
+
+		template<typename T>
+		std::optional<T> GetConstantInputValue(uint32_t inputIdx) const
+		{
+			auto &input = inputs.at(inputIdx);
+			if(input.link && input.link->parent)
+				return {};
+			return visit(input.GetSocket().type, [&input](auto tag) -> std::optional<T> {
+				using TTo = T;
+				using TFrom = typename decltype(tag)::type;
+				if constexpr(udm::is_convertible<TFrom, TTo>()) {
+					TFrom v;
+					if(!input.GetValue(v))
+						return {};
+					return udm::convert<TFrom, TTo>(v);
+				}
+				return {};
+			});
+		}
+		template<typename T>
+		std::optional<T> GetConstantInputValue(const std::string_view &inputName) const
+		{
+			if constexpr(std::is_enum_v<T>) {
+				auto v = GetConstantInputValue<typename std::underlying_type<T>::type>(inputName);
+				return v ? static_cast<T>(*v) : std::optional<T> {};
+			}
+			else {
+				auto &inputs = node.GetInputs();
+				auto it = std::find_if(inputs.begin(), inputs.end(), [&inputName](const Socket &socket) { return socket.name == inputName; });
+				if(it == inputs.end())
+					throw std::invalid_argument {"No input named '" + std::string {inputName} + "' exists!"};
+				return GetConstantInputValue<T>(it - inputs.begin());
+			}
+			// Unreachable
+			return {};
+		}
+
+		std::string GetGlslOutputDeclaration(uint32_t outputIdx) const { return node.GetGlslOutputDeclaration(*this, outputIdx); }
+		std::string GetGlslOutputDeclaration(const std::string_view &name) const { return node.GetGlslOutputDeclaration(*this, name); }
+
 		void ClearInputValue(const std::string_view &inputName);
 		void DisconnectAll();
 		bool Disconnect(const std::string_view &inputName);

@@ -33,6 +33,7 @@ export namespace pragma::shadergraph {
 		const std::string_view &GetType() const;
 		std::string GetInputNameOrValue(const GraphNode &instance, uint32_t inputIdx) const;
 		std::string GetInputNameOrValue(const GraphNode &instance, const std::string_view &inputName) const;
+
 		std::string Evaluate(const Graph &graph, const GraphNode &instance) const;
 		template<typename TEnum>
 		    requires(std::is_enum_v<TEnum>)
@@ -53,8 +54,10 @@ export namespace pragma::shadergraph {
 		const std::vector<Socket> &GetOutputs() const;
 		const Socket *GetInput(size_t index) const;
 		const Socket *GetOutput(size_t index) const;
+
+		std::string GetGlslOutputDeclaration(const GraphNode &instance, uint32_t outputIdx) const;
+		std::string GetGlslOutputDeclaration(const GraphNode &instance, const std::string_view &name) const;
 	  protected:
-		std::string GetUniqueVarName() const;
 		virtual std::string DoEvaluate(const Graph &graph, const GraphNode &instance) const = 0;
 
 		std::string_view m_type;

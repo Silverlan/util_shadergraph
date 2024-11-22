@@ -100,7 +100,7 @@ export namespace pragma::shadergraph {
 		case SocketType::Float:
 			return "float";
 		case SocketType::Color:
-			return "vec4";
+			return "vec3";
 		case SocketType::Vector:
 		case SocketType::Point:
 		case SocketType::Normal:

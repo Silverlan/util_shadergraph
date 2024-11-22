@@ -32,6 +32,21 @@ std::string Node::Evaluate(const Graph &graph, const GraphNode &instance) const
 }
 void Node::AddOutput(const std::string &name, SocketType type) { m_outputs.emplace_back(name, type); }
 
+std::string Node::GetGlslOutputDeclaration(const GraphNode &instance, uint32_t outputIdx) const
+{
+	if(outputIdx >= m_outputs.size())
+		throw std::invalid_argument {"Output index out of range!"};
+	auto &output = m_outputs[outputIdx];
+	return std::string {to_glsl_type(output.type)} + " " + instance.GetOutputVarName(output.name) + " = ";
+}
+std::string Node::GetGlslOutputDeclaration(const GraphNode &instance, const std::string_view &name) const
+{
+	auto outputIdx = FindOutputIndex(name);
+	if(!outputIdx)
+		throw std::invalid_argument {"No output named '" + std::string {name} + "' exists!"};
+	return GetGlslOutputDeclaration(instance, *outputIdx);
+}
+
 std::optional<size_t> Node::FindOutputIndex(const std::string_view &name) const
 {
 	auto it = std::find_if(m_outputs.begin(), m_outputs.end(), [&name](const Socket &socket) { return socket.name == name; });
@@ -58,6 +73,8 @@ std::string Node::GetInputNameOrValue(const GraphNode &instance, uint32_t inputI
 			using T = typename decltype(tag)::type;
 			if constexpr(is_socket_type<T>() && !std::is_same_v<T, udm::String>) {
 				T v;
+				if(!input.GetValue(v))
+					throw std::invalid_argument {"Failed to retrieve input value!"};
 				val = to_glsl_value<T>(v);
 			}
 			else
