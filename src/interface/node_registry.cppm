@@ -36,8 +36,12 @@ export namespace pragma::shadergraph {
 			RegisterNode(std::string {node->GetType()}, node);
 		}
 		const std::shared_ptr<Node> GetNode(const std::string &name) const;
+		void GetNodeTypes(std::vector<std::string> &outNames) const;
+		void AddChildRegistry(const std::shared_ptr<NodeRegistry> &registry) { m_childRegistries.push_back(registry); }
+		const std::vector<std::shared_ptr<NodeRegistry>> &GetChildRegistries() const { return m_childRegistries; }
 	  private:
 		void RegisterNode(const std::string &name, const std::shared_ptr<Node> &node);
 		std::unordered_map<std::string, std::shared_ptr<Node>> m_nodes;
+		std::vector<std::shared_ptr<NodeRegistry>> m_childRegistries;
 	};
 };

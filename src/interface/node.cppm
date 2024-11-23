@@ -33,6 +33,7 @@ export namespace pragma::shadergraph {
 		const std::string_view &GetType() const;
 		std::string GetInputNameOrValue(const GraphNode &instance, uint32_t inputIdx) const;
 		std::string GetInputNameOrValue(const GraphNode &instance, const std::string_view &inputName) const;
+		const std::vector<std::string> &GetModuleDependencies() const { return m_dependencies; }
 
 		std::string Evaluate(const Graph &graph, const GraphNode &instance) const;
 		template<typename TEnum>
@@ -59,10 +60,12 @@ export namespace pragma::shadergraph {
 		std::string GetGlslOutputDeclaration(const GraphNode &instance, const std::string_view &name) const;
 	  protected:
 		virtual std::string DoEvaluate(const Graph &graph, const GraphNode &instance) const = 0;
+		void AddModuleDependency(const std::string &name) { m_dependencies.push_back(name); }
 
 		std::string_view m_type;
 		std::vector<Socket> m_inputs;
 		std::vector<Socket> m_outputs;
+		std::vector<std::string> m_dependencies;
 	};
 
 	void Node::AddSocket(const std::string &name, SocketType type, auto defaultVal)

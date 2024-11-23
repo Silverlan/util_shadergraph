@@ -37,7 +37,7 @@ std::string Node::GetGlslOutputDeclaration(const GraphNode &instance, uint32_t o
 	if(outputIdx >= m_outputs.size())
 		throw std::invalid_argument {"Output index out of range!"};
 	auto &output = m_outputs[outputIdx];
-	return std::string {to_glsl_type(output.type)} + " " + instance.GetOutputVarName(output.name) + " = ";
+	return std::string {to_glsl_type(output.type)} + " " + instance.GetOutputVarName(output.name);
 }
 std::string Node::GetGlslOutputDeclaration(const GraphNode &instance, const std::string_view &name) const
 {

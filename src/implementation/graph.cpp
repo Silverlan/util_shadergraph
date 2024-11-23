@@ -11,6 +11,10 @@ module;
 #include <string>
 #include <iostream>
 #include <queue>
+#include <unordered_map>
+#include <stdexcept>
+#include <unordered_set>
+#include <sstream>
 #include <udm.hpp>
 
 module pragma.shadergraph;
@@ -37,8 +41,9 @@ void Graph::Test()
 
 	graph.DebugPrint();
 
-	std::string glslCode = graph.GenerateGLSL();
-	std::cout << "Generated GLSL:\n" << glslCode << std::endl;
+	std::ostringstream header, body;
+	graph.GenerateGlsl(header, body);
+	std::cout << "Generated GLSL:\n" << body.str() << std::endl;
 	//bool Link(const char *outputName, GraphNode &linkTarget, const char *inputName)
 	//
 	// TODO: Apply operation?
@@ -100,7 +105,7 @@ std::shared_ptr<GraphNode> Graph::AddNode(const std::string &type)
 	return inst;
 }
 
-std::vector<GraphNode *> Graph::topologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes)
+std::vector<GraphNode *> Graph::TopologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes) const
 {
 	std::unordered_map<GraphNode *, int> in_degree;
 	std::unordered_map<GraphNode *, std::vector<GraphNode *>> adj_list;
@@ -156,7 +161,7 @@ std::vector<GraphNode *> Graph::topologicalSort(const std::vector<std::shared_pt
 
 void Graph::DebugPrint()
 {
-	auto sortedNodes = topologicalSort(m_nodes);
+	auto sortedNodes = TopologicalSort(m_nodes);
 	// Print the topologically sorted nodes in order
 	std::cout << "Topological Sort Order:\n";
 	for(const auto *node : sortedNodes) {
@@ -216,6 +221,29 @@ void Graph::FindInvalidLinks()
 
 //void ConnectNodes(Node::Ptr outputNode, int outputIndex, Node::Ptr inputNode, int inputIndex) { connections.emplace_back(outputNode, outputIndex, inputNode, inputIndex); }
 
+bool Graph::Load(const std::string &filePath, std::string &outErr)
+{
+	std::shared_ptr<udm::Data> data {};
+	try {
+		data = udm::Data::Load(filePath);
+	}
+	catch(const udm::Exception &e) {
+		outErr = e.what();
+		return false;
+	}
+	if(!data) {
+		outErr = "Failed to load shader graph data!";
+		return false;
+	}
+	auto assetData = data->GetAssetData();
+
+	auto udmData = assetData.GetData();
+	auto result = Load(udmData, outErr);
+	if(!result)
+		return false;
+	return true;
+}
+
 bool Graph::Load(udm::LinkedPropertyWrapper &prop, std::string &outErr)
 {
 	/*if(data.GetAssetType() != PSG_IDENTIFIER) {
@@ -271,6 +299,27 @@ bool Graph::Load(udm::LinkedPropertyWrapper &prop, std::string &outErr)
 	return true;
 }
 
+bool Graph::Save(const std::string &filePath, std::string &outErr) const
+{
+	auto data = udm::Data::Create();
+	auto assetData = data->GetAssetData();
+	auto result = Save(assetData, outErr);
+	if(!result)
+		return false;
+	try {
+		result = data->SaveAscii(filePath);
+	}
+	catch(const udm::Exception &e) {
+		outErr = e.what();
+		return false;
+	}
+	if(!result) {
+		outErr = "Failed to save shader graph data!";
+		return false;
+	}
+	return true;
+}
+
 bool Graph::Save(udm::AssetDataArg outData, std::string &outErr) const
 {
 	outData.SetAssetType(PSG_IDENTIFIER);
@@ -287,23 +336,29 @@ bool Graph::Save(udm::AssetDataArg outData, std::string &outErr) const
 	return true;
 }
 
-std::string Graph::GenerateGLSL()
+void Graph::GenerateGlsl(std::ostream &outHeader, std::ostream &outBody) const
 {
-	auto sortedNodes = topologicalSort(m_nodes);
+	auto sortedNodes = TopologicalSort(m_nodes);
 
 	uint32_t nodeIndex = 0;
 	for(auto &node : sortedNodes)
 		node->nodeIndex = nodeIndex++;
 
-	// Sort nodes topologically (not implemented in this minimal example).
-	std::ostringstream glslCode;
+	std::unordered_set<std::string> requiredModules;
+	for(const auto &node : sortedNodes) {
+		for(const auto &dep : node->node.GetModuleDependencies())
+			requiredModules.insert(dep);
+	}
+
+	for(const auto &dep : requiredModules) {
+		outHeader << "// " << dep << "\n";
+		outHeader << "#include \"/modules/" << dep << ".glsl\"\n";
+	}
 
 	// Traverse nodes and generate GLSL code for each
 	for(const auto &node : sortedNodes) {
-		glslCode << "// " << node->GetName() << " (" << (*node)->GetType() << ")\n";
-		glslCode << node->node.Evaluate(*this, *node);
-		glslCode << "\n";
+		outBody << "// " << node->GetName() << " (" << (*node)->GetType() << ")\n";
+		outBody << node->node.Evaluate(*this, *node);
+		outBody << "\n";
 	}
-
-	return glslCode.str();
 }

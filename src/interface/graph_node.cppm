@@ -79,7 +79,7 @@ export namespace pragma::shadergraph {
 			return input.SetValue<T>(val);
 		}
 		template<typename T>
-		bool GetInputValue(const std::string_view &inputName, T &outVal)
+		bool GetInputValue(const std::string_view &inputName, T &outVal) const
 		{
 			auto inputIdx = node.FindInputIndex(inputName);
 			if(!inputIdx)
@@ -135,7 +135,7 @@ export namespace pragma::shadergraph {
 		bool Disconnect(const std::string_view &inputName);
 		bool Disconnect(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName);
 		bool CanLink(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName) const;
-		bool Link(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName);
+		bool Link(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName, std::string *optOutErr = nullptr);
 
 		bool IsOutputLinked(const std::string_view &name) const;
 		std::optional<size_t> FindOutputIndex(const std::string_view &name) const;

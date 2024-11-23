@@ -13,6 +13,7 @@ module;
 #include <udm_types.hpp>
 #include <queue>
 #include <stdexcept>
+#include <sstream>
 #include <iostream>
 
 export module pragma.shadergraph:graph;
@@ -36,13 +37,15 @@ export namespace pragma::shadergraph {
 		std::shared_ptr<GraphNode> GetNode(const std::string &name);
 		bool RemoveNode(const std::string &name);
 		const std::vector<std::shared_ptr<GraphNode>> &GetNodes() const { return m_nodes; }
-		std::vector<GraphNode *> topologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes);
 		void DebugPrint();
 		void FindInvalidLinks();
-		std::string GenerateGLSL();
+		void GenerateGlsl(std::ostream &outHeader, std::ostream &outBody) const;
 		bool Load(udm::LinkedPropertyWrapper &prop, std::string &outErr);
+		bool Load(const std::string &filePath, std::string &outErr);
 		bool Save(udm::AssetDataArg outData, std::string &outErr) const;
+		bool Save(const std::string &filePath, std::string &outErr) const;
 	  private:
+		std::vector<GraphNode *> TopologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes) const;
 		std::shared_ptr<NodeRegistry> m_nodeRegistry;
 		std::vector<std::shared_ptr<GraphNode>> m_nodes;
 		std::unordered_map<std::string, size_t> m_nameToNodeIndex;

@@ -23,7 +23,10 @@ MathNode::MathNode(const std::string_view &type) : Node {type}
 	AddInput(IN_VALUE1, SocketType::Float, 0.5f);
 	AddInput(IN_VALUE2, SocketType::Float, 0.5f);
 	AddInput(IN_VALUE3, SocketType::Float, 0.f);
+
 	AddOutput(OUT_VALUE, SocketType::Float);
+
+	AddModuleDependency("math");
 }
 
 std::string MathNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
@@ -156,7 +159,7 @@ std::string MathNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 		code << "-smoothmin(-" << v1 << ", -" << v2 << ", " << v3 << ")";
 		break;
 	case Operation::Compare:
-		code << "((" << v1 << " == " << v2 << ") || (abs(" << v1 << " -" << v2 << ") <= max(" << v3 << ", FLT_EPSILON))) ? 1.0 : 0.0";
+		code << "((abs(" << v1 << " -" << v2 << ") <= max(" << v3 << ", FLT_EPSILON))) ? 1.0 : 0.0";
 		break;
 	}
 	code << ";\n";

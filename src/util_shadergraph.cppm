@@ -8,4 +8,6 @@ export import :graph;
 export import :graph_node;
 export import :node_registry;
 export import :nodes.math;
+export import :nodes.combine_xyz;
+export import :nodes.separate_xyz;
 export import :socket;

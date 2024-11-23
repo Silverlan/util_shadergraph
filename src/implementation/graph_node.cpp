@@ -105,16 +105,25 @@ bool GraphNode::CanLink(const std::string_view &outputName, GraphNode &linkTarge
 	// TODO: Check if types are compatible
 	return true;
 }
-bool GraphNode::Link(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName)
+bool GraphNode::Link(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName, std::string *optOutErr)
 {
-	if(!CanLink(outputName, linkTarget, inputName))
+	if(!CanLink(outputName, linkTarget, inputName)) {
+		if(optOutErr)
+			*optOutErr = "Incompatible socket types!";
 		return false;
+	}
 	auto outputIdx = node.FindOutputIndex(outputName);
-	if(!outputIdx)
+	if(!outputIdx) {
+		if(optOutErr)
+			*optOutErr = "No output named '" + std::string {outputName} + "' exists!";
 		return false;
+	}
 	auto inputIdx = linkTarget.node.FindInputIndex(inputName);
-	if(!inputIdx)
+	if(!inputIdx) {
+		if(optOutErr)
+			*optOutErr = "No input named '" + std::string {inputName} + "' exists!";
 		return false;
+	}
 	Disconnect(outputName, linkTarget, inputName);
 
 	auto &input = linkTarget.inputs[*inputIdx];
