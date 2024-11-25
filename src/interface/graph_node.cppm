@@ -149,6 +149,7 @@ export namespace pragma::shadergraph {
 		const InputSocket *GetInput(size_t index) const { return const_cast<GraphNode *>(this)->GetInput(index); }
 		const OutputSocket *GetOutput(size_t index) const { return const_cast<GraphNode *>(this)->GetOutput(index); }
 
+		std::string GetBaseVarName() const;
 		std::string GetOutputVarName(size_t outputIdx) const;
 		std::string GetOutputVarName(const std::string_view &name) const;
 
