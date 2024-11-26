@@ -88,6 +88,9 @@ export namespace pragma::shadergraph {
 			return input.GetValue<T>(outVal);
 		}
 
+		bool IsInputLinked(uint32_t inputIdx) const;
+		bool IsInputLinked(const std::string_view &name) const;
+
 		std::string GetInputNameOrValue(uint32_t inputIdx) const { return node.GetInputNameOrValue(*this, inputIdx); }
 		std::string GetInputNameOrValue(const std::string_view &inputName) const { return node.GetInputNameOrValue(*this, inputName); }
 

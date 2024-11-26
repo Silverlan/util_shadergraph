@@ -178,6 +178,21 @@ std::string GraphNode::GetOutputVarName(const std::string_view &name) const
 	return GetOutputVarName(it - outputs.begin());
 }
 
+bool GraphNode::IsInputLinked(uint32_t inputIdx) const
+{
+	auto &input = inputs.at(inputIdx);
+	return input.link && input.link->parent;
+}
+
+bool GraphNode::IsInputLinked(const std::string_view &name) const
+{
+	auto &inputs = node.GetInputs();
+	auto it = std::find_if(inputs.begin(), inputs.end(), [&name](const Socket &socket) { return socket.name == name; });
+	if(it == inputs.end())
+		throw std::invalid_argument {"No input named '" + std::string {name} + "' exists!"};
+	return IsInputLinked(it - inputs.begin());
+}
+
 bool GraphNode::LoadFromAssetData(udm::LinkedPropertyWrapper &prop, std::vector<SocketLink> &outLinks, std::string &outErr)
 {
 	prop["displayName"] >> m_displayName;
