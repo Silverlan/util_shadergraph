@@ -355,6 +355,12 @@ void Graph::GenerateGlsl(std::ostream &outHeader, std::ostream &outBody) const
 		outHeader << "#include \"/modules/" << dep << ".glsl\"\n";
 	}
 
+	for(const auto &node : sortedNodes) {
+		outHeader << "// " << node->GetName() << " (" << (*node)->GetType() << ")\n";
+		outHeader << node->node.EvaluateResourceDeclarations(*this, *node);
+		outHeader << "\n";
+	}
+
 	// Traverse nodes and generate GLSL code for each
 	for(const auto &node : sortedNodes) {
 		outBody << "// " << node->GetName() << " (" << (*node)->GetType() << ")\n";

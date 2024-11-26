@@ -15,6 +15,7 @@ module;
 #include <vector>
 #include <optional>
 #include <sharedutils/magic_enum.hpp>
+#include <udm.hpp>
 
 module pragma.shadergraph;
 
@@ -26,6 +27,12 @@ Node::Node(const std::string_view &type) : m_type {type} {}
 Node::~Node() {}
 
 const std::string_view &Node::GetType() const { return m_type; }
+std::string Node::EvaluateResourceDeclarations(const Graph &graph, const GraphNode &instance) const
+{
+	auto res = DoEvaluateResourceDeclarations(graph, instance);
+	//m_curVarId = 0;
+	return res;
+}
 std::string Node::Evaluate(const Graph &graph, const GraphNode &instance) const
 {
 	auto res = DoEvaluate(graph, instance);
