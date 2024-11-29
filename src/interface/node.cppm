@@ -31,6 +31,8 @@ export namespace pragma::shadergraph {
 		virtual ~Node();
 
 		const std::string_view &GetType() const;
+		std::string GetConstantValue(const GraphNode &instance, uint32_t inputIdx) const;
+		std::string GetConstantValue(const GraphNode &instance, const std::string_view &inputName) const;
 		std::string GetInputNameOrValue(const GraphNode &instance, uint32_t inputIdx) const;
 		std::string GetInputNameOrValue(const GraphNode &instance, const std::string_view &inputName) const;
 		const std::vector<std::string> &GetModuleDependencies() const { return m_dependencies; }

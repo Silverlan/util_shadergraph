@@ -71,25 +71,38 @@ const std::vector<Socket> &Node::GetOutputs() const { return m_outputs; }
 const Socket *Node::GetInput(size_t index) const { return (index < m_inputs.size()) ? &m_inputs[index] : nullptr; }
 const Socket *Node::GetOutput(size_t index) const { return (index < m_outputs.size()) ? &m_outputs[index] : nullptr; }
 
+std::string Node::GetConstantValue(const GraphNode &instance, uint32_t inputIdx) const
+{
+	std::string val;
+	auto &input = instance.inputs.at(inputIdx);
+	visit(input.GetSocket().type, [&input, &val](auto tag) {
+		using T = typename decltype(tag)::type;
+		if constexpr(is_socket_type<T>() && !std::is_same_v<T, udm::String>) {
+			T v;
+			if(!input.GetValue(v))
+				throw std::invalid_argument {"Failed to retrieve input value!"};
+			val = to_glsl_value<T>(v);
+		}
+		else
+			throw std::invalid_argument {"Socket type '" + std::string {magic_enum::enum_name(input.GetSocket().type)} + "' cannot be converted to GLSL!"};
+	});
+	return val;
+}
+std::string Node::GetConstantValue(const GraphNode &instance, const std::string_view &inputName) const
+{
+	auto it = std::find_if(m_inputs.begin(), m_inputs.end(), [&inputName](const Socket &socket) { return socket.name == inputName; });
+	if(it == m_inputs.end())
+		throw std::invalid_argument {"No input named '" + std::string {inputName} + "' exists!"};
+	return GetConstantValue(instance, it - m_inputs.begin());
+}
 std::string Node::GetInputNameOrValue(const GraphNode &instance, uint32_t inputIdx) const
 {
 	std::string val;
 	auto &input = instance.inputs.at(inputIdx);
 	if(input.link && input.link->parent)
 		val = input.link->parent->GetOutputVarName(input.link->outputIndex);
-	else {
-		visit(input.GetSocket().type, [&input, &val](auto tag) {
-			using T = typename decltype(tag)::type;
-			if constexpr(is_socket_type<T>() && !std::is_same_v<T, udm::String>) {
-				T v;
-				if(!input.GetValue(v))
-					throw std::invalid_argument {"Failed to retrieve input value!"};
-				val = to_glsl_value<T>(v);
-			}
-			else
-				throw std::invalid_argument {"Socket type '" + std::string {magic_enum::enum_name(input.GetSocket().type)} + "' cannot be converted to GLSL!"};
-		});
-	}
+	else
+		val = GetConstantValue(instance, inputIdx);
 	return val;
 }
 std::string Node::GetInputNameOrValue(const GraphNode &instance, const std::string_view &inputName) const

@@ -91,6 +91,8 @@ export namespace pragma::shadergraph {
 		bool IsInputLinked(uint32_t inputIdx) const;
 		bool IsInputLinked(const std::string_view &name) const;
 
+		std::string GetConstantValue(uint32_t inputIdx) const { return node.GetConstantValue(*this, inputIdx); }
+		std::string GetConstantValue(const std::string_view &inputName) const { return node.GetConstantValue(*this, inputName); }
 		std::string GetInputNameOrValue(uint32_t inputIdx) const { return node.GetInputNameOrValue(*this, inputIdx); }
 		std::string GetInputNameOrValue(const std::string_view &inputName) const { return node.GetInputNameOrValue(*this, inputName); }
 
