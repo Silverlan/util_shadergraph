@@ -1,0 +1,49 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/.
+*
+* Copyright (c) 2024 Silverlan
+*/
+
+module;
+
+#include <string_view>
+#include <sstream>
+#include <mathutil/uvec.h>
+
+module pragma.shadergraph;
+
+import :nodes.bright_contrast;
+
+using namespace pragma::shadergraph;
+
+BrightContrast::BrightContrast(const std::string_view &type) : Node {type}
+{
+	AddInput(IN_COLOR, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_BRIGHT, SocketType::Float, 0.f);
+	AddInput(IN_CONTRAST, SocketType::Float, 0.f);
+
+	AddOutput(OUT_COLOR, SocketType::Color);
+}
+
+std::string BrightContrast::DoEvaluate(const Graph &graph, const GraphNode &gn) const
+{
+	std::ostringstream code;
+	auto color = gn.GetInputNameOrValue(IN_COLOR);
+	auto brightness = gn.GetInputNameOrValue(IN_BRIGHT);
+	auto contrast = gn.GetInputNameOrValue(IN_CONTRAST);
+
+	auto a = gn.GetVarName("a");
+	auto b = gn.GetVarName("b");
+
+	code << "float " << a << " = 1.0f + " << contrast << ";\n";
+	code << "float " << b << " = " << brightness << " - " << contrast << " * 0.5f;\n";
+
+	code << gn.GetGlslOutputDeclaration(OUT_COLOR) << " = vec3(\n";
+	code << "max(" << a << " * " << color << ".x + " << b << ", 0.0f),\n";
+	code << "max(" << a << " * " << color << ".y + " << b << ", 0.0f),\n";
+	code << "max(" << a << " * " << color << ".z + " << b << ", 0.0f)\n";
+	code << ");\n";
+
+	return code.str();
+}
