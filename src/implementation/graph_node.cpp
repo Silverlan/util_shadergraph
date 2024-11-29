@@ -169,7 +169,8 @@ bool GraphNode::IsOutputLinked(const std::string_view &name) const
 }
 
 std::string GraphNode::GetBaseVarName() const { return "var" + std::to_string(nodeIndex); }
-std::string GraphNode::GetOutputVarName(size_t outputIdx) const { return GetBaseVarName() + "_" + std::to_string(outputIdx); }
+std::string GraphNode::GetVarName(const std::string &var) const { return GetBaseVarName() + "_" + var; }
+std::string GraphNode::GetOutputVarName(size_t outputIdx) const { return GetVarName(std::to_string(outputIdx)); }
 std::string GraphNode::GetOutputVarName(const std::string_view &name) const
 {
 	auto it = std::find_if(outputs.begin(), outputs.end(), [&name](const OutputSocket &output) { return output.GetSocket().name == name; });
