@@ -9,6 +9,7 @@ export import :graph_node;
 export import :node_registry;
 export import :nodes.math;
 export import :nodes.vector_math;
+export import :nodes.clamp;
 export import :nodes.combine_xyz;
 export import :nodes.separate_xyz;
 export import :nodes.mix;
