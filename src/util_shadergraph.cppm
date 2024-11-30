@@ -16,6 +16,7 @@ export import :nodes.combine_xyz;
 export import :nodes.separate_xyz;
 export import :nodes.gamma;
 export import :nodes.hsv;
+export import :nodes.invert;
 export import :nodes.mix;
 export import :nodes.separate_hsv;
 export import :nodes.value;
