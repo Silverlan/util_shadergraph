@@ -18,6 +18,7 @@ export import :nodes.gamma;
 export import :nodes.hsv;
 export import :nodes.invert;
 export import :nodes.mix;
+export import :nodes.rgb_to_bw;
 export import :nodes.separate_hsv;
 export import :nodes.value;
 export import :socket;
