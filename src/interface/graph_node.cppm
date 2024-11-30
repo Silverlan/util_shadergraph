@@ -63,7 +63,7 @@ export namespace pragma::shadergraph {
 		std::vector<InputSocket> inputs;
 		std::vector<OutputSocket> outputs;
 		GraphNode(Graph &graph, Node &node, const std::string &name);
-		GraphNode(const GraphNode &) = delete;
+		GraphNode(const GraphNode &other);
 		GraphNode &operator=(const GraphNode &) = delete;
 		const Node *operator->() const { return &node; }
 		std::string GetName() const;
@@ -87,6 +87,11 @@ export namespace pragma::shadergraph {
 			auto &input = inputs[*inputIdx];
 			return input.GetValue<T>(outVal);
 		}
+		void Relink(uint32_t outputIdx, GraphNode &newNode, uint32_t newNodeOutputIdx);
+		void Relink(const std::string_view &outputName, GraphNode &newNode, const std::string_view &newNodeOutputName);
+
+		void PropagateInputSocket(uint32_t inputIdx, GraphNode &otherNode, uint32_t otherNodeInputIdx);
+		void PropagateInputSocket(const std::string_view &inputName, GraphNode &otherNode, const std::string_view &otherNodeInputName);
 
 		bool IsInputLinked(uint32_t inputIdx) const;
 		bool IsInputLinked(const std::string_view &name) const;
@@ -137,10 +142,17 @@ export namespace pragma::shadergraph {
 
 		void ClearInputValue(const std::string_view &inputName);
 		void DisconnectAll();
+		void DisconnectInputs();
+		void DisconnectOutputs();
+		void DisconnectOutputs(uint32_t outputIdx);
 		bool Disconnect(const std::string_view &inputName);
+		bool Disconnect(uint32_t inputIdx);
 		bool Disconnect(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName);
+		bool Disconnect(uint32_t outputIdx, GraphNode &linkTarget, uint32_t inputIdx);
 		bool CanLink(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName) const;
+		bool CanLink(uint32_t outputIdx, GraphNode &linkTarget, uint32_t inputIdx) const;
 		bool Link(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName, std::string *optOutErr = nullptr);
+		bool Link(uint32_t outputIdx, GraphNode &linkTarget, uint32_t inputIdx, std::string *optOutErr = nullptr);
 
 		bool IsOutputLinked(const std::string_view &name) const;
 		std::optional<size_t> FindOutputIndex(const std::string_view &name) const;

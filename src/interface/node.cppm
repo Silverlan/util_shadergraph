@@ -37,6 +37,8 @@ export namespace pragma::shadergraph {
 		std::string GetInputNameOrValue(const GraphNode &instance, const std::string_view &inputName) const;
 		const std::vector<std::string> &GetModuleDependencies() const { return m_dependencies; }
 
+		virtual void Expand(Graph &graph, GraphNode &gn) const {}
+
 		std::string Evaluate(const Graph &graph, const GraphNode &instance) const;
 		std::string EvaluateResourceDeclarations(const Graph &graph, const GraphNode &instance) const;
 		template<typename TEnum>

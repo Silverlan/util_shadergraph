@@ -57,6 +57,38 @@ void Graph::Test()
 	//std::cout << "Generated GLSL:\n" << glslCode << std::endl;
 }
 
+Graph::Graph(const Graph &other) : m_nodeRegistry {other.m_nodeRegistry}, m_nameToNodeIndex {other.m_nameToNodeIndex}
+{
+	m_nodes.reserve(other.m_nodes.size());
+	std::unordered_map<GraphNode *, GraphNode *> oldToNew;
+	oldToNew.reserve(other.m_nodes.size());
+	for(auto &node : m_nodes) {
+		m_nodes.push_back(std::make_shared<GraphNode>(*node));
+		oldToNew[node.get()] = m_nodes.back().get();
+	}
+	for(auto &node : m_nodes) {
+		for(auto &output : node->outputs) {
+			auto it = oldToNew.find(output.parent);
+			if(it == oldToNew.end())
+				throw std::runtime_error("Failed to find new parent node for output socket!");
+			output.parent = it->second;
+		}
+		for(auto &input : node->inputs) {
+			auto it = oldToNew.find(input.parent);
+			if(it == oldToNew.end())
+				throw std::runtime_error("Failed to find new parent node for input socket!");
+			input.parent = it->second;
+
+			if(!input.link)
+				continue;
+			it = oldToNew.find(input.link->parent);
+			if(it == oldToNew.end())
+				throw std::runtime_error("Failed to find new node for input socket link!");
+			input.link = &it->second->outputs[input.link->outputIndex];
+		}
+	}
+}
+
 Graph::Graph(const std::shared_ptr<NodeRegistry> &nodeReg) : m_nodeRegistry {nodeReg} {}
 std::shared_ptr<GraphNode> Graph::GetNode(const std::string &name)
 {
@@ -336,8 +368,16 @@ bool Graph::Save(udm::AssetDataArg outData, std::string &outErr) const
 	return true;
 }
 
-void Graph::GenerateGlsl(std::ostream &outHeader, std::ostream &outBody) const
+void Graph::DoGenerateGlsl(std::ostream &outHeader, std::ostream &outBody, const std::optional<std::string> &namePrefix)
 {
+	// We can't use an iterator here because we need to expand nodes, which may add new nodes during iteration
+	size_t i = 0;
+	while(i < m_nodes.size()) {
+		auto &node = m_nodes[i];
+		node->node.Expand(*this, *node);
+		++i;
+	}
+
 	auto sortedNodes = TopologicalSort(m_nodes);
 
 	uint32_t nodeIndex = 0;
@@ -367,4 +407,12 @@ void Graph::GenerateGlsl(std::ostream &outHeader, std::ostream &outBody) const
 		outBody << node->node.Evaluate(*this, *node);
 		outBody << "\n";
 	}
+}
+
+void Graph::GenerateGlsl(std::ostream &outHeader, std::ostream &outBody, const std::optional<std::string> &namePrefix) const
+{
+	// To generate the GLSL code we need to expand all nodes (such as group nodes),
+	// which modifies the graph. We create a copy so we don't have to modify the original graph.
+	auto cpy = *this;
+	cpy.DoGenerateGlsl(outHeader, outBody, namePrefix);
 }
