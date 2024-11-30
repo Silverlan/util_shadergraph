@@ -14,6 +14,7 @@ export import :nodes.clamp;
 export import :nodes.combine_xyz;
 export import :nodes.separate_xyz;
 export import :nodes.gamma;
+export import :nodes.hsv;
 export import :nodes.mix;
 export import :nodes.value;
 export import :socket;
