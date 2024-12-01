@@ -62,8 +62,8 @@ Graph::Graph(const Graph &other) : m_nodeRegistry {other.m_nodeRegistry}, m_name
 	m_nodes.reserve(other.m_nodes.size());
 	std::unordered_map<GraphNode *, GraphNode *> oldToNew;
 	oldToNew.reserve(other.m_nodes.size());
-	for(auto &node : m_nodes) {
-		m_nodes.push_back(std::make_shared<GraphNode>(*node));
+	for(auto &node : other.m_nodes) {
+		m_nodes.push_back(std::make_shared<GraphNode>(*this, *node));
 		oldToNew[node.get()] = m_nodes.back().get();
 	}
 	for(auto &node : m_nodes) {
@@ -72,6 +72,13 @@ Graph::Graph(const Graph &other) : m_nodeRegistry {other.m_nodeRegistry}, m_name
 			if(it == oldToNew.end())
 				throw std::runtime_error("Failed to find new parent node for output socket!");
 			output.parent = it->second;
+			for(size_t i = 0; i < output.links.size(); ++i) {
+				auto *input = output.links[i];
+				it = oldToNew.find(input->parent);
+				if(it == oldToNew.end())
+					throw std::runtime_error("Failed to find new node for output socket link!");
+				output.links[i] = &it->second->inputs[input->inputIndex];
+			}
 		}
 		for(auto &input : node->inputs) {
 			auto it = oldToNew.find(input.parent);

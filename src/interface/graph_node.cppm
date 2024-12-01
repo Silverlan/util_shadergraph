@@ -63,7 +63,8 @@ export namespace pragma::shadergraph {
 		std::vector<InputSocket> inputs;
 		std::vector<OutputSocket> outputs;
 		GraphNode(Graph &graph, Node &node, const std::string &name);
-		GraphNode(const GraphNode &other);
+		GraphNode(const GraphNode &other) = delete;
+		GraphNode(Graph &graph, const GraphNode &other);
 		GraphNode &operator=(const GraphNode &) = delete;
 		const Node *operator->() const { return &node; }
 		std::string GetName() const;
