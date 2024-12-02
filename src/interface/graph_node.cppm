@@ -62,7 +62,7 @@ export namespace pragma::shadergraph {
 		const Node &node;
 		std::vector<InputSocket> inputs;
 		std::vector<OutputSocket> outputs;
-		GraphNode(Graph &graph, Node &node, const std::string &name);
+		GraphNode(Graph &graph, Node &node);
 		GraphNode(const GraphNode &other) = delete;
 		GraphNode(Graph &graph, const GraphNode &other);
 		GraphNode &operator=(const GraphNode &) = delete;
@@ -175,10 +175,13 @@ export namespace pragma::shadergraph {
 		bool Save(udm::LinkedPropertyWrapper &prop) const;
 		bool LoadFromAssetData(udm::LinkedPropertyWrapper &prop, std::vector<SocketLink> &outLinks, std::string &outErr);
 
+		friend Graph;
 		Graph &graph;
 		uint32_t nodeIndex = std::numeric_limits<uint32_t>::max();
 		std::string m_name;
 		std::optional<std::string> m_displayName {};
+	  private:
+		void SetName(const std::string &name) { m_name = name; }
 	};
 
 	template<typename T>

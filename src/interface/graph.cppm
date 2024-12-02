@@ -36,8 +36,11 @@ export namespace pragma::shadergraph {
 		static void Test();
 		std::shared_ptr<GraphNode> AddNode(const std::string &type);
 		std::shared_ptr<GraphNode> GetNode(const std::string &name);
+		std::shared_ptr<GraphNode> FindNodeByType(const std::string_view &type) const;
 		bool RemoveNode(const std::string &name);
 		const std::vector<std::shared_ptr<GraphNode>> &GetNodes() const { return m_nodes; }
+		const std::shared_ptr<NodeRegistry> &GetNodeRegistry() const { return m_nodeRegistry; }
+		void Merge(const Graph &other);
 		void DebugPrint();
 		void FindInvalidLinks();
 		void GenerateGlsl(std::ostream &outHeader, std::ostream &outBody, const std::optional<std::string> &namePrefix = {}) const;
@@ -46,6 +49,7 @@ export namespace pragma::shadergraph {
 		bool Save(udm::AssetDataArg outData, std::string &outErr) const;
 		bool Save(const std::string &filePath, std::string &outErr) const;
 	  private:
+		void AddNode(const std::shared_ptr<GraphNode> &node);
 		void DoGenerateGlsl(std::ostream &outHeader, std::ostream &outBody, const std::optional<std::string> &namePrefix);
 		std::vector<GraphNode *> TopologicalSort(const std::vector<std::shared_ptr<GraphNode>> &nodes) const;
 		std::shared_ptr<NodeRegistry> m_nodeRegistry;

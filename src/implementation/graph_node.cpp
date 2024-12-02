@@ -27,10 +27,8 @@ void InputSocket::ClearValue() { value.Clear(); }
 bool InputSocket::HasValue() const { return value; }
 const Socket &InputSocket::GetSocket() const { return *parent->node.GetInput(inputIndex); }
 
-GraphNode::GraphNode(Graph &graph, const GraphNode &other) : graph {graph}, node {other.node}, m_name {other.m_name}, m_displayName {other.m_displayName}, nodeIndex {other.nodeIndex}, inputs {other.inputs}, outputs {other.outputs}
-{
-}
-GraphNode::GraphNode(Graph &graph, Node &node, const std::string &name) : graph {graph}, node {node}, m_name {name}
+GraphNode::GraphNode(Graph &graph, const GraphNode &other) : graph {graph}, node {other.node}, m_name {other.m_name}, m_displayName {other.m_displayName}, nodeIndex {other.nodeIndex}, inputs {other.inputs}, outputs {other.outputs} {}
+GraphNode::GraphNode(Graph &graph, Node &node) : graph {graph}, node {node}
 {
 	auto &nodeInputs = node.GetInputs();
 	inputs.reserve(nodeInputs.size());

@@ -57,16 +57,23 @@ void Graph::Test()
 	//std::cout << "Generated GLSL:\n" << glslCode << std::endl;
 }
 
-Graph::Graph(const Graph &other) : m_nodeRegistry {other.m_nodeRegistry}, m_nameToNodeIndex {other.m_nameToNodeIndex}
+Graph::Graph(const Graph &other) : m_nodeRegistry {other.m_nodeRegistry} { Merge(other); }
+
+Graph::Graph(const std::shared_ptr<NodeRegistry> &nodeReg) : m_nodeRegistry {nodeReg} {}
+
+void Graph::Merge(const Graph &other)
 {
-	m_nodes.reserve(other.m_nodes.size());
+	m_nodes.reserve(m_nodes.size() + other.m_nodes.size());
 	std::unordered_map<GraphNode *, GraphNode *> oldToNew;
 	oldToNew.reserve(other.m_nodes.size());
+	auto offset = m_nodes.size();
 	for(auto &node : other.m_nodes) {
-		m_nodes.push_back(std::make_shared<GraphNode>(*this, *node));
-		oldToNew[node.get()] = m_nodes.back().get();
+		auto newNode = std::make_shared<GraphNode>(*this, *node);
+		AddNode(newNode);
+		oldToNew[node.get()] = newNode.get();
 	}
-	for(auto &node : m_nodes) {
+	for(size_t i = offset; i < m_nodes.size(); ++i) {
+		auto *node = m_nodes[i].get();
 		for(auto &output : node->outputs) {
 			auto it = oldToNew.find(output.parent);
 			if(it == oldToNew.end())
@@ -96,7 +103,14 @@ Graph::Graph(const Graph &other) : m_nodeRegistry {other.m_nodeRegistry}, m_name
 	}
 }
 
-Graph::Graph(const std::shared_ptr<NodeRegistry> &nodeReg) : m_nodeRegistry {nodeReg} {}
+std::shared_ptr<GraphNode> Graph::FindNodeByType(const std::string_view &type) const
+{
+	for(const auto &node : m_nodes) {
+		if(node->node.GetType() == type)
+			return node;
+	}
+	return nullptr;
+}
 std::shared_ptr<GraphNode> Graph::GetNode(const std::string &name)
 {
 	auto it = m_nameToNodeIndex.find(name);
@@ -122,12 +136,9 @@ bool Graph::RemoveNode(const std::string &name)
 	}
 	return true;
 }
-std::shared_ptr<GraphNode> Graph::AddNode(const std::string &type)
+void Graph::AddNode(const std::shared_ptr<GraphNode> &node)
 {
-	auto node = m_nodeRegistry->GetNode(type);
-	if(!node)
-		return nullptr;
-	std::string name = type;
+	std::string name {(*node)->GetType()};
 	size_t i = 1;
 	for(;;) {
 		auto namei = name + std::to_string(i);
@@ -138,9 +149,17 @@ std::shared_ptr<GraphNode> Graph::AddNode(const std::string &type)
 		++i;
 	}
 
-	auto inst = std::make_shared<GraphNode>(*this, *node, name);
-	m_nodes.push_back(inst);
+	node->SetName(name);
+	m_nodes.push_back(node);
 	m_nameToNodeIndex[name] = m_nodes.size() - 1;
+}
+std::shared_ptr<GraphNode> Graph::AddNode(const std::string &type)
+{
+	auto node = m_nodeRegistry->GetNode(type);
+	if(!node)
+		return nullptr;
+	auto inst = std::make_shared<GraphNode>(*this, *node);
+	AddNode(inst);
 	return inst;
 }
 
@@ -313,7 +332,8 @@ bool Graph::Load(udm::LinkedPropertyWrapper &prop, std::string &outErr)
 
 		std::string name;
 		udmNode["name"] >> name;
-		auto inst = std::make_shared<GraphNode>(*this, *node, name);
+		auto inst = std::make_shared<GraphNode>(*this, *node);
+		inst->SetName(name);
 		if(!inst->LoadFromAssetData(udmNode, links, outErr))
 			return false;
 		if(m_nameToNodeIndex.find(name) != m_nameToNodeIndex.end()) {
