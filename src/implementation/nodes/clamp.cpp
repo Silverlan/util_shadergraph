@@ -23,7 +23,7 @@ ClampNode::ClampNode(const std::string_view &type) : Node {type}
 
 	AddInput(IN_VALUE, SocketType::Float, 1.f);
 	AddInput(IN_MIN, SocketType::Float, 0.f);
-	AddInput(IN_MIN, SocketType::Float, 1.f);
+	AddInput(IN_MAX, SocketType::Float, 1.f);
 
 	AddOutput(OUT_RESULT, SocketType::Float);
 }
@@ -36,8 +36,8 @@ std::string ClampNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 	auto max = gn.GetInputNameOrValue(IN_MAX);
 	auto clampType = *gn.GetConstantInputValue<ClampType>(CONST_CLAMP_TYPE);
 
-	code << gn.GetGlslOutputDeclaration(OUT_RESULT) << "\n";
-	auto outVar = GetOutputVarName(OUT_RESULT);
+	code << gn.GetGlslOutputDeclaration(OUT_RESULT) << ";\n";
+	auto outVar = gn.GetOutputVarName(OUT_RESULT);
 
 	switch(clampType) {
 	case ClampType::MinMax:

@@ -17,7 +17,7 @@ import :nodes.bright_contrast;
 
 using namespace pragma::shadergraph;
 
-BrightContrast::BrightContrast(const std::string_view &type) : Node {type}
+BrightContrastNode::BrightContrastNode(const std::string_view &type) : Node {type}
 {
 	AddInput(IN_COLOR, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
 	AddInput(IN_BRIGHT, SocketType::Float, 0.f);
@@ -26,7 +26,7 @@ BrightContrast::BrightContrast(const std::string_view &type) : Node {type}
 	AddOutput(OUT_COLOR, SocketType::Color);
 }
 
-std::string BrightContrast::DoEvaluate(const Graph &graph, const GraphNode &gn) const
+std::string BrightContrastNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 {
 	std::ostringstream code;
 	auto color = gn.GetInputNameOrValue(IN_COLOR);

@@ -15,7 +15,7 @@ export module pragma.shadergraph:nodes.bright_contrast;
 import :node;
 export namespace pragma::shadergraph {
 
-	class BrightContrast : public Node {
+	class BrightContrastNode : public Node {
 	  public:
 		static constexpr const char *IN_COLOR = "color";
 		static constexpr const char *IN_BRIGHT = "bright";
@@ -23,7 +23,7 @@ export namespace pragma::shadergraph {
 
 		static constexpr const char *OUT_COLOR = "color";
 
-		BrightContrast(const std::string_view &type);
+		BrightContrastNode(const std::string_view &type);
 
 		virtual std::string DoEvaluate(const Graph &graph, const GraphNode &instance) const override;
 	};

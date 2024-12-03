@@ -19,11 +19,11 @@ using namespace pragma::shadergraph;
 
 CombineHsvNode::CombineHsvNode(const std::string_view &type) : Node {type}
 {
-	AddInput(OUT_H, SocketType::Float, 0.f);
-	AddInput(OUT_S, SocketType::Float, 0.f);
-	AddInput(OUT_V, SocketType::Float, 0.f);
+	AddInput(IN_H, SocketType::Float, 0.f);
+	AddInput(IN_S, SocketType::Float, 0.f);
+	AddInput(IN_V, SocketType::Float, 0.f);
 
-	AddOutput(IN_COLOR, SocketType::Color);
+	AddOutput(OUT_COLOR, SocketType::Color);
 
 	AddModuleDependency("color");
 }
@@ -31,12 +31,12 @@ CombineHsvNode::CombineHsvNode(const std::string_view &type) : Node {type}
 std::string CombineHsvNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 {
 	std::ostringstream code;
-	auto h = gn.GetInputNameOrValue(OUT_H);
-	auto s = gn.GetInputNameOrValue(OUT_S);
-	auto v = gn.GetInputNameOrValue(OUT_V);
+	auto h = gn.GetInputNameOrValue(IN_H);
+	auto s = gn.GetInputNameOrValue(IN_S);
+	auto v = gn.GetInputNameOrValue(IN_V);
 
 	auto color = gn.GetVarName("color");
 	code << "vec3 " << color << " = hsv_to_rgb(vec3(" << h << ", " << s << ", " << v << "));\n";
-	code << gn.GetGlslOutputDeclaration(IN_COLOR) << " = " << color << ";\n";
+	code << gn.GetGlslOutputDeclaration(OUT_COLOR) << " = " << color << ";\n";
 	return code.str();
 }

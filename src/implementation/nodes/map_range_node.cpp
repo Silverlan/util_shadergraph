@@ -54,6 +54,8 @@ std::string MapRangeNode::DoEvaluate(const Graph &graph, const GraphNode &gn) co
 	auto clamp = gn.GetInputNameOrValue(IN_CLAMP);
 
 	auto type = *gn.GetConstantInputValue<Type>(CONST_TYPE);
+	code << gn.GetGlslOutputDeclaration(OUT_RESULT) << ";\n";
+	auto outVar = gn.GetOutputVarName(OUT_RESULT);
 	code << "if(compare(" << fromMax << ", " << fromMin << ")) {\n";
 	auto factor = gn.GetVarName("factor");
 	code << "\tfloat " << factor << ";\n";
@@ -73,10 +75,9 @@ std::string MapRangeNode::DoEvaluate(const Graph &graph, const GraphNode &gn) co
 		break;
 	}
 
-	code << "\t" << gn.GetGlslOutputDeclaration(OUT_RESULT) << " = " << toMin << " + " << factor << " * (" << toMax << " - " << toMin << ");\n";
-
+	code << "\t" << outVar << " = " << toMin << " + " << factor << " * (" << toMax << " - " << toMin << ");\n";
 	code << "} else {\n";
-	code << gn.GetGlslOutputDeclaration(OUT_RESULT) << " = 0.0;\n";
+	code << "\t" << outVar << " = 0.0;\n";
 	code << "}\n";
 	return code.str();
 }

@@ -31,7 +31,7 @@ std::string GammaNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 	auto color = gn.GetInputNameOrValue(IN_COLOR);
 	auto gamma = gn.GetInputNameOrValue(IN_GAMMA);
 
-	auto outVar = GetOutputVarName(OUT_RESULT);
+	auto outVar = gn.GetOutputVarName(OUT_COLOR);
 	code << gn.GetGlslOutputDeclaration(OUT_COLOR) << ";\n";
 	code << "if (" << gamma << " == 0.0f)\n";
 	code << "\t" << outVar << " = vec3(1.0f, 1.0f, 1.0f);\n";
