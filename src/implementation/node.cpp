@@ -113,8 +113,11 @@ std::string Node::GetInputNameOrValue(const GraphNode &instance, const std::stri
 		throw std::invalid_argument {"No input named '" + std::string {inputName} + "' exists!"};
 	return GetInputNameOrValue(instance, it - m_inputs.begin());
 }
-Socket &Node::AddSocket(const std::string &name, SocketType type)
+Socket &Node::AddSocket(const std::string &name, SocketType type, float min, float max)
 {
 	m_inputs.emplace_back(name, type);
-	return m_inputs.back();
+	auto &socket = m_inputs.back();
+	socket.min = min;
+	socket.max = max;
+	return socket;
 }

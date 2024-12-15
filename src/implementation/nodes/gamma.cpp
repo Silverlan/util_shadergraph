@@ -20,7 +20,7 @@ using namespace pragma::shadergraph;
 GammaNode::GammaNode(const std::string_view &type) : Node {type}
 {
 	AddInput(IN_COLOR, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
-	AddInput(IN_GAMMA, SocketType::Float, 1.f);
+	AddInput(IN_GAMMA, SocketType::Float, 1.f, 0.f, 5.f);
 
 	AddOutput(OUT_COLOR, SocketType::Color);
 }

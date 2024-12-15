@@ -239,6 +239,9 @@ export namespace pragma::shadergraph {
 		SocketValue defaultValue;
 		std::unique_ptr<EnumSet> enumSet;
 
+		float min = 0.0f;
+		float max = 1.0f;
+
 		Socket(const std::string &name, SocketType type);
 		Socket(const Socket &other);
 		~Socket();
