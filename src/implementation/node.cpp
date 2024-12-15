@@ -40,7 +40,11 @@ std::string Node::Evaluate(const Graph &graph, const GraphNode &instance) const
 	//m_curVarId = 0;
 	return res;
 }
-void Node::AddOutput(const std::string &name, SocketType type) { m_outputs.emplace_back(name, type); }
+Socket &Node::AddOutput(const std::string &name, SocketType type)
+{
+	m_outputs.emplace_back(name, type);
+	return m_outputs.back();
+}
 
 std::string Node::GetGlslOutputDeclaration(const GraphNode &instance, uint32_t outputIdx) const
 {

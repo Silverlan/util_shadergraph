@@ -52,10 +52,10 @@ export namespace pragma::shadergraph {
 			m_inputs.back().enumSet = EnumSet::Create<TEnum>();
 		}
 		template<typename T>
-		void AddSocket(const std::string &name, SocketType type, T defaultVal, float min = 0.f, float max = 1.f);
+		Socket &AddSocket(const std::string &name, SocketType type, T defaultVal, float min = 0.f, float max = 1.f);
 		template<typename T>
-		void AddInput(const std::string &name, SocketType type, T defaultVal, float min = 0.f, float max = 1.f);
-		void AddOutput(const std::string &name, SocketType type);
+		Socket &AddInput(const std::string &name, SocketType type, T defaultVal, float min = 0.f, float max = 1.f);
+		Socket &AddOutput(const std::string &name, SocketType type);
 
 		std::optional<size_t> FindOutputIndex(const std::string_view &name) const;
 		std::optional<size_t> FindInputIndex(const std::string_view &name) const;
@@ -80,7 +80,7 @@ export namespace pragma::shadergraph {
 	};
 
 	template<typename T>
-	void Node::AddSocket(const std::string &name, SocketType type, T defaultVal, float min, float max)
+	Socket &Node::AddSocket(const std::string &name, SocketType type, T defaultVal, float min, float max)
 	{
 		if constexpr(std::is_floating_point_v<T> || std::is_integral_v<T>) {
 			if(defaultVal < min)
@@ -90,10 +90,13 @@ export namespace pragma::shadergraph {
 		}
 		auto &socket = AddSocket(name, type, min, max);
 		socket.defaultValue.Set(defaultVal);
+		return socket;
 	}
 	template<typename T>
-	void Node::AddInput(const std::string &name, SocketType type, T defaultVal, float min, float max)
+	Socket &Node::AddInput(const std::string &name, SocketType type, T defaultVal, float min, float max)
 	{
-		AddSocket<T>(name, type, defaultVal, min, max);
+		auto &socket = AddSocket<T>(name, type, defaultVal, min, max);
+		socket.flags |= Socket::Flags::Linkable;
+		return socket;
 	}
 };

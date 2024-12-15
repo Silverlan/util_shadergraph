@@ -68,6 +68,9 @@ Socket::Socket(const std::string &name, SocketType type) : name(name), type(type
 Socket::Socket(const Socket &other) : Socket {other.name, other.type}
 {
 	defaultValue = other.defaultValue;
+	min = other.min;
+	max = other.max;
+	flags = other.flags;
 	enumSet = other.enumSet ? std::make_unique<EnumSet>(*other.enumSet) : nullptr;
 }
 

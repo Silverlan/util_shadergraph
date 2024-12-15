@@ -234,16 +234,23 @@ export namespace pragma::shadergraph {
 	};
 
 	struct Socket {
+		enum class Flags : uint32_t {
+			None = 0,
+			Linkable = 1u,
+		};
 		std::string name;
 		SocketType type;
 		SocketValue defaultValue;
 		std::unique_ptr<EnumSet> enumSet;
+		Flags flags = Flags::None;
 
 		float min = 0.0f;
 		float max = 1.0f;
 
 		Socket(const std::string &name, SocketType type);
 		Socket(const Socket &other);
+		bool IsLinkable() const { return umath::is_flag_set(flags, Flags::Linkable); }
 		~Socket();
 	};
 };
+export {REGISTER_BASIC_BITWISE_OPERATORS(pragma::shadergraph::Socket::Flags)};
