@@ -49,6 +49,7 @@ export namespace pragma::shadergraph {
 			using T = std::underlying_type_t<TEnum>;
 			// static_assert(std::numeric_limits<T>::lowest() >= std::numeric_limits<udm::Int32>::lowest() && std::numeric_limits<T>::max() <= std::numeric_limits<udm::Int32>::max(), "Underlying enum type must be compatible with int32.");
 			m_inputs.back().defaultValue.Set(static_cast<udm::Int32>(defaultVal));
+			m_inputs.back().enumSet = EnumSet::Create<TEnum>();
 		}
 		void AddSocket(const std::string &name, SocketType type, auto defaultVal);
 		void AddInput(const std::string &name, SocketType type, auto defaultVal);
@@ -72,16 +73,18 @@ export namespace pragma::shadergraph {
 		std::vector<Socket> m_inputs;
 		std::vector<Socket> m_outputs;
 		std::vector<std::string> m_dependencies;
+	  private:
+		Socket &AddSocket(const std::string &name, SocketType type);
 	};
 
 	void Node::AddSocket(const std::string &name, SocketType type, auto defaultVal)
 	{
-		m_inputs.emplace_back(name, type);
-		m_inputs.back().defaultValue.Set(defaultVal);
+		auto &socket = AddSocket(name, type);
+		socket.defaultValue.Set(defaultVal);
 	}
 	void Node::AddInput(const std::string &name, SocketType type, auto defaultVal)
 	{
-		m_inputs.emplace_back(name, type);
-		m_inputs.back().defaultValue.Set(defaultVal);
+		auto &socket = AddSocket(name, type);
+		socket.defaultValue.Set(defaultVal);
 	}
 };

@@ -10,6 +10,7 @@ module;
 #include <string>
 #include <vector>
 #include <optional>
+#include <memory>
 #include <unordered_map>
 #include <udm.hpp>
 #include <udm_enums.hpp>
@@ -18,6 +19,9 @@ module;
 #include <typeinfo>
 
 export module pragma.shadergraph:socket;
+
+import :enum_set;
+
 #pragma optimize("", off)
 export namespace pragma::shadergraph {
 	enum class SocketType : uint8_t {
@@ -115,8 +119,7 @@ export namespace pragma::shadergraph {
 		return nullptr;
 	}
 
-	constexpr std::variant<udm::tag_t<udm::Boolean>, udm::tag_t<udm::Int32>, udm::tag_t<udm::UInt32>, udm::tag_t<udm::UInt64>, udm::tag_t<udm::Float>, udm::tag_t<udm::Vector3>, udm::tag_t<udm::Vector2>, udm::tag_t<udm::String>, udm::tag_t<udm::Mat4>> get_tag(
-	  SocketType e)
+	constexpr std::variant<udm::tag_t<udm::Boolean>, udm::tag_t<udm::Int32>, udm::tag_t<udm::UInt32>, udm::tag_t<udm::UInt64>, udm::tag_t<udm::Float>, udm::tag_t<udm::Vector3>, udm::tag_t<udm::Vector2>, udm::tag_t<udm::String>, udm::tag_t<udm::Mat4>> get_tag(SocketType e)
 	{
 		switch(e) {
 		case SocketType::Boolean:
@@ -222,6 +225,8 @@ export namespace pragma::shadergraph {
 		}
 
 		void Clear();
+		SocketType GetType() const { return m_type; }
+		const udm::DataValue GetData() const { return m_value; }
 		operator bool() const;
 	  private:
 		SocketType m_type;
@@ -232,7 +237,10 @@ export namespace pragma::shadergraph {
 		std::string name;
 		SocketType type;
 		SocketValue defaultValue;
+		std::unique_ptr<EnumSet> enumSet;
 
 		Socket(const std::string &name, SocketType type);
+		Socket(const Socket &other);
+		~Socket();
 	};
 };

@@ -14,6 +14,7 @@ module;
 #include <algorithm>
 #include <vector>
 #include <optional>
+#include <sharedutils/util_case_insensitive_hash.hpp>
 #include <sharedutils/magic_enum.hpp>
 #include <udm.hpp>
 
@@ -111,4 +112,9 @@ std::string Node::GetInputNameOrValue(const GraphNode &instance, const std::stri
 	if(it == m_inputs.end())
 		throw std::invalid_argument {"No input named '" + std::string {inputName} + "' exists!"};
 	return GetInputNameOrValue(instance, it - m_inputs.begin());
+}
+Socket &Node::AddSocket(const std::string &name, SocketType type)
+{
+	m_inputs.emplace_back(name, type);
+	return m_inputs.back();
 }

@@ -11,6 +11,7 @@ module;
 #include <string_view>
 #include <stdexcept>
 #include <cassert>
+#include <memory>
 
 module pragma.shadergraph;
 
@@ -63,3 +64,11 @@ void SocketValue::Clear()
 SocketValue::operator bool() const { return m_value != nullptr; }
 
 Socket::Socket(const std::string &name, SocketType type) : name(name), type(type), defaultValue {type} {}
+
+Socket::Socket(const Socket &other) : Socket {other.name, other.type}
+{
+	defaultValue = other.defaultValue;
+	enumSet = other.enumSet ? std::make_unique<EnumSet>(*other.enumSet) : nullptr;
+}
+
+Socket::~Socket() {}

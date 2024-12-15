@@ -10,6 +10,7 @@ module;
 #include <string>
 #include <cassert>
 #include <stdexcept>
+#include <sharedutils/util_case_insensitive_hash.hpp>
 #include <udm.hpp>
 
 module pragma.shadergraph;

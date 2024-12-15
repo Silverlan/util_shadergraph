@@ -23,3 +23,4 @@ export import :nodes.rgb_to_bw;
 export import :nodes.separate_hsv;
 export import :nodes.value;
 export import :socket;
+export import :enum_set;

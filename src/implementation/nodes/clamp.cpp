@@ -10,6 +10,7 @@ module;
 #include <string_view>
 #include <sstream>
 #include <mathutil/uvec.h>
+#include <sharedutils/util_case_insensitive_hash.hpp>
 
 module pragma.shadergraph;
 
