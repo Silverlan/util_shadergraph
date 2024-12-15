@@ -153,6 +153,45 @@ export namespace pragma::shadergraph {
 		  || std::is_same_v<T, udm::Mat4>;
 	}
 
+	constexpr bool is_socket_type_compatible(SocketType a, SocketType b)
+	{
+		if(a == b)
+			return true;
+		switch(a) {
+		case SocketType::Boolean:
+		case SocketType::Int:
+		case SocketType::UInt:
+		case SocketType::Float:
+		case SocketType::Enum:
+			{
+				switch(b) {
+				case SocketType::Boolean:
+				case SocketType::Int:
+				case SocketType::UInt:
+				case SocketType::Float:
+				case SocketType::Enum:
+					return true;
+				}
+				return false;
+			}
+		case SocketType::Color:
+		case SocketType::Vector:
+		case SocketType::Point:
+		case SocketType::Normal:
+			{
+				switch(b) {
+				case SocketType::Color:
+				case SocketType::Vector:
+				case SocketType::Point:
+				case SocketType::Normal:
+					return true;
+				}
+				return false;
+			}
+		}
+		return false;
+	}
+
 	template<typename T>
 	concept is_socket_type_v = is_socket_type<T>();
 

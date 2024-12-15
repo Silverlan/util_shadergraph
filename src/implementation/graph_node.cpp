@@ -184,15 +184,27 @@ bool GraphNode::Disconnect(const std::string_view &outputName, GraphNode &linkTa
 }
 bool GraphNode::CanLink(uint32_t outputIdx, GraphNode &linkTarget, uint32_t inputIdx) const
 {
-	// TODO: Check if types are compatible
+	if(&linkTarget == this)
+		return false;
+	auto *output = GetOutput(outputIdx);
+	auto *input = linkTarget.GetInput(inputIdx);
+	if(!output || !input)
+		return false;
+	if(!input->GetSocket().IsLinkable())
+		return false;
+	if(!is_socket_type_compatible(output->GetSocket().type, input->GetSocket().type))
+		return false;
 	return true;
 }
 bool GraphNode::CanLink(const std::string_view &outputName, GraphNode &linkTarget, const std::string_view &inputName) const
 {
-	if(&linkTarget == this)
+	auto outputIdx = node.FindOutputIndex(outputName);
+	if(!outputIdx)
 		return false;
-	// TODO: Check if types are compatible
-	return true;
+	auto inputIdx = linkTarget.node.FindInputIndex(inputName);
+	if(!inputIdx)
+		return false;
+	return CanLink(*outputIdx, linkTarget, *inputIdx);
 }
 bool GraphNode::Link(uint32_t outputIdx, GraphNode &linkTarget, uint32_t inputIdx, std::string *optOutErr)
 {
