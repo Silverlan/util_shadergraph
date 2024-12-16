@@ -102,6 +102,16 @@ export namespace pragma::shadergraph {
 		std::string GetInputNameOrValue(uint32_t inputIdx) const { return node.GetInputNameOrValue(*this, inputIdx); }
 		std::string GetInputNameOrValue(const std::string_view &inputName) const { return node.GetInputNameOrValue(*this, inputName); }
 
+		const InputSocket *FindInputSocket(const std::string_view &inputName) const
+		{
+			auto &nodeInputs = node.GetInputs();
+			auto it = std::find_if(nodeInputs.begin(), nodeInputs.end(), [&inputName](const Socket &socket) { return socket.name == inputName; });
+			if(it == nodeInputs.end())
+				return nullptr;
+			auto idx = it -nodeInputs.begin();
+			return &inputs[idx];
+		}
+
 		template<typename T>
 		std::optional<T> GetConstantInputValue(uint32_t inputIdx) const
 		{
