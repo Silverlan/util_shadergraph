@@ -20,12 +20,12 @@ using namespace pragma::shadergraph;
 VectorMathNode::VectorMathNode(const std::string_view &type) : Node {type}
 {
 	AddSocketEnum<Operation>(IN_OPERATION, Operation::Add);
-	AddInput(IN_VECTOR1, SocketType::Vector, Vector3 {0.f, 0.f, 0.f});
-	AddInput(IN_VECTOR2, SocketType::Vector, Vector3 {0.f, 0.f, 0.f});
-	AddInput(IN_VECTOR3, SocketType::Vector, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_VECTOR1, DataType::Vector, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_VECTOR2, DataType::Vector, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_VECTOR3, DataType::Vector, Vector3 {0.f, 0.f, 0.f});
 
-	AddOutput(OUT_VALUE, SocketType::Float);
-	AddOutput(OUT_VECTOR, SocketType::Vector);
+	AddOutput(OUT_VALUE, DataType::Float);
+	AddOutput(OUT_VECTOR, DataType::Vector);
 
 	AddModuleDependency("math");
 }

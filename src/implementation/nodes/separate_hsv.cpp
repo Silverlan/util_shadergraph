@@ -19,11 +19,11 @@ using namespace pragma::shadergraph;
 
 SeparateHsv::SeparateHsv(const std::string_view &type) : Node {type}
 {
-	AddInput(IN_COLOR, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 
-	AddOutput(OUT_H, SocketType::Float);
-	AddOutput(OUT_S, SocketType::Float);
-	AddOutput(OUT_V, SocketType::Float);
+	AddOutput(OUT_H, DataType::Float);
+	AddOutput(OUT_S, DataType::Float);
+	AddOutput(OUT_V, DataType::Float);
 
 	AddModuleDependency("color");
 }

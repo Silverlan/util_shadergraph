@@ -22,11 +22,11 @@ ClampNode::ClampNode(const std::string_view &type) : Node {type}
 {
 	AddSocketEnum<ClampType>(CONST_CLAMP_TYPE, ClampType::MinMax);
 
-	AddInput(IN_VALUE, SocketType::Float, 1.f);
-	AddInput(IN_MIN, SocketType::Float, 0.f);
-	AddInput(IN_MAX, SocketType::Float, 1.f);
+	AddInput(IN_VALUE, DataType::Float, 1.f);
+	AddInput(IN_MIN, DataType::Float, 0.f);
+	AddInput(IN_MAX, DataType::Float, 1.f);
 
-	AddOutput(OUT_RESULT, SocketType::Float);
+	AddOutput(OUT_RESULT, DataType::Float);
 }
 
 std::string ClampNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const

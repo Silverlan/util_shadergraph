@@ -19,12 +19,12 @@ using namespace pragma::shadergraph;
 MathNode::MathNode(const std::string_view &type) : Node {type}
 {
 	AddSocketEnum<Operation>(IN_OPERATION, Operation::Add);
-	AddInput(IN_CLAMP, SocketType::Boolean, false);
-	AddInput(IN_VALUE1, SocketType::Float, 0.5f);
-	AddInput(IN_VALUE2, SocketType::Float, 0.5f);
-	AddInput(IN_VALUE3, SocketType::Float, 0.f);
+	AddInput(IN_CLAMP, DataType::Boolean, false);
+	AddInput(IN_VALUE1, DataType::Float, 0.5f);
+	AddInput(IN_VALUE2, DataType::Float, 0.5f);
+	AddInput(IN_VALUE3, DataType::Float, 0.f);
 
-	AddOutput(OUT_VALUE, SocketType::Float);
+	AddOutput(OUT_VALUE, DataType::Float);
 
 	AddModuleDependency("math");
 }

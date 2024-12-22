@@ -19,11 +19,11 @@ using namespace pragma::shadergraph;
 
 SeparateXyzNode::SeparateXyzNode(const std::string_view &type) : Node {type}
 {
-	AddInput(IN_VECTOR, SocketType::Vector, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_VECTOR, DataType::Vector, Vector3 {0.f, 0.f, 0.f});
 
-	AddOutput(OUT_X, SocketType::Float);
-	AddOutput(OUT_Y, SocketType::Float);
-	AddOutput(OUT_Z, SocketType::Float);
+	AddOutput(OUT_X, DataType::Float);
+	AddOutput(OUT_Y, DataType::Float);
+	AddOutput(OUT_Z, DataType::Float);
 }
 
 std::string SeparateXyzNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const

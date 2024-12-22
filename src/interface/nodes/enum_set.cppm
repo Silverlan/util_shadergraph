@@ -37,6 +37,11 @@ export namespace pragma::shadergraph {
 			m_nameToValue[name] = value;
 			m_valueToName[value] = name;
 		}
+		void reserve(size_t size)
+		{
+			m_nameToValue.reserve(size);
+			m_valueToName.reserve(size);
+		}
 		bool exists(const std::string &name) const { return m_nameToValue.find(name) != m_nameToValue.end(); }
 		bool exists(int32_t value) const { return m_valueToName.find(value) != m_valueToName.end(); }
 		std::optional<int32_t> findValue(const std::string &name) const

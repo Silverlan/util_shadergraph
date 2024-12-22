@@ -192,7 +192,7 @@ bool GraphNode::CanLink(uint32_t outputIdx, GraphNode &linkTarget, uint32_t inpu
 		return false;
 	if(!input->GetSocket().IsLinkable())
 		return false;
-	if(!is_socket_type_compatible(output->GetSocket().type, input->GetSocket().type))
+	if(!is_data_type_compatible(output->GetSocket().type, input->GetSocket().type))
 		return false;
 	return true;
 }

@@ -21,15 +21,15 @@ MapRangeNode::MapRangeNode(const std::string_view &type) : Node {type}
 {
 	AddSocketEnum<Type>(CONST_TYPE, Type::Linear);
 
-	AddInput(IN_VALUE, SocketType::Float, 1.f);
-	AddInput(IN_FROM_MIN, SocketType::Float, 0.f);
-	AddInput(IN_FROM_MAX, SocketType::Float, 1.f);
-	AddInput(IN_TO_MIN, SocketType::Float, 0.f);
-	AddInput(IN_TO_MAX, SocketType::Float, 1.f);
-	AddInput(IN_STEPS, SocketType::Float, 4.f);
-	AddInput(IN_CLAMP, SocketType::Boolean, false);
+	AddInput(IN_VALUE, DataType::Float, 1.f);
+	AddInput(IN_FROM_MIN, DataType::Float, 0.f);
+	AddInput(IN_FROM_MAX, DataType::Float, 1.f);
+	AddInput(IN_TO_MIN, DataType::Float, 0.f);
+	AddInput(IN_TO_MAX, DataType::Float, 1.f);
+	AddInput(IN_STEPS, DataType::Float, 4.f);
+	AddInput(IN_CLAMP, DataType::Boolean, false);
 
-	AddOutput(OUT_RESULT, SocketType::Float);
+	AddOutput(OUT_RESULT, DataType::Float);
 }
 
 void MapRangeNode::Expand(Graph &graph, GraphNode &gn) const

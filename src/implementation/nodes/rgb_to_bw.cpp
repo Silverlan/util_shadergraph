@@ -19,9 +19,9 @@ using namespace pragma::shadergraph;
 
 RgbToBwNode::RgbToBwNode(const std::string_view &type) : Node {type}
 {
-	AddInput(IN_COLOR, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 
-	AddOutput(OUT_VAL, SocketType::Float);
+	AddOutput(OUT_VAL, DataType::Float);
 }
 
 std::string RgbToBwNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const

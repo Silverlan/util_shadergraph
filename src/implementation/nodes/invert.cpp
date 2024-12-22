@@ -19,10 +19,10 @@ using namespace pragma::shadergraph;
 
 InvertNode::InvertNode(const std::string_view &type) : Node {type}
 {
-	AddInput(IN_FAC, SocketType::Float, 1.f);
-	AddSocket(IN_COLOR, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_FAC, DataType::Float, 1.f);
+	AddSocket(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 
-	AddOutput(OUT_COLOR, SocketType::Color);
+	AddOutput(OUT_COLOR, DataType::Color);
 }
 
 std::string InvertNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const

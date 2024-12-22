@@ -20,11 +20,11 @@ using namespace pragma::shadergraph;
 
 CombineHsvNode::CombineHsvNode(const std::string_view &type) : Node {type}
 {
-	AddInput(IN_H, SocketType::Float, 0.f);
-	AddInput(IN_S, SocketType::Float, 0.f);
-	AddInput(IN_V, SocketType::Float, 0.f);
+	AddInput(IN_H, DataType::Float, 0.f);
+	AddInput(IN_S, DataType::Float, 0.f);
+	AddInput(IN_V, DataType::Float, 0.f);
 
-	AddOutput(OUT_COLOR, SocketType::Color);
+	AddOutput(OUT_COLOR, DataType::Color);
 
 	AddModuleDependency("color");
 }

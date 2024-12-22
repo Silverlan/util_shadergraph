@@ -19,13 +19,13 @@ using namespace pragma::shadergraph;
 
 HsvNode::HsvNode(const std::string_view &type) : Node {type}
 {
-	AddInput(IN_HUE, SocketType::Float, 0.5f);
-	AddInput(IN_SATURATION, SocketType::Float, 1.f);
-	AddInput(IN_VALUE, SocketType::Float, 1.f);
-	AddInput(IN_FAC, SocketType::Float, 1.f);
-	AddInput(IN_COLOR, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_HUE, DataType::Float, 0.5f);
+	AddInput(IN_SATURATION, DataType::Float, 1.f);
+	AddInput(IN_VALUE, DataType::Float, 1.f);
+	AddInput(IN_FAC, DataType::Float, 1.f);
+	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 
-	AddOutput(OUT_COLOR, SocketType::Color);
+	AddOutput(OUT_COLOR, DataType::Color);
 
 	AddModuleDependency("color");
 }

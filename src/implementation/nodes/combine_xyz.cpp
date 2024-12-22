@@ -19,11 +19,11 @@ using namespace pragma::shadergraph;
 
 CombineXyzNode::CombineXyzNode(const std::string_view &type) : Node {type}
 {
-	AddInput(IN_X, SocketType::Float, 0.f);
-	AddInput(IN_Y, SocketType::Float, 0.f);
-	AddInput(IN_Z, SocketType::Float, 0.f);
+	AddInput(IN_X, DataType::Float, 0.f);
+	AddInput(IN_Y, DataType::Float, 0.f);
+	AddInput(IN_Z, DataType::Float, 0.f);
 
-	AddOutput(OUT_VECTOR, SocketType::Vector);
+	AddOutput(OUT_VECTOR, DataType::Vector);
 }
 
 std::string CombineXyzNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const

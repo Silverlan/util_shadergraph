@@ -22,12 +22,12 @@ using namespace pragma::shadergraph;
 MixNode::MixNode(const std::string_view &type) : Node {type}
 {
 	AddSocketEnum<Type>(IN_TYPE, Type::Mix);
-	AddInput(IN_FAC, SocketType::Float, 0.5f);
-	AddInput(IN_CLAMP, SocketType::Boolean, false);
-	AddInput(IN_COLOR1, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
-	AddInput(IN_COLOR2, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_FAC, DataType::Float, 0.5f);
+	AddInput(IN_CLAMP, DataType::Boolean, false);
+	AddInput(IN_COLOR1, DataType::Color, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_COLOR2, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 
-	AddOutput(OUT_COLOR, SocketType::Color);
+	AddOutput(OUT_COLOR, DataType::Color);
 
 	AddModuleDependency("mix");
 }

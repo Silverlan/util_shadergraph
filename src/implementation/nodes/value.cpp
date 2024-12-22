@@ -19,9 +19,9 @@ using namespace pragma::shadergraph;
 
 ValueNode::ValueNode(const std::string_view &type) : Node {type}
 {
-	AddSocket(CONST_VALUE, SocketType::Float, 0.f);
+	AddSocket(CONST_VALUE, DataType::Float, 0.f);
 
-	AddOutput(OUT_VALUE, SocketType::Float);
+	AddOutput(OUT_VALUE, DataType::Float);
 }
 
 std::string ValueNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const

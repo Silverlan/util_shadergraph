@@ -40,7 +40,7 @@ std::string Node::Evaluate(const Graph &graph, const GraphNode &instance) const
 	//m_curVarId = 0;
 	return res;
 }
-Socket &Node::AddOutput(const std::string &name, SocketType type)
+Socket &Node::AddOutput(const std::string &name, DataType type)
 {
 	m_outputs.emplace_back(name, type);
 	return m_outputs.back();
@@ -82,7 +82,7 @@ std::string Node::GetConstantValue(const GraphNode &instance, uint32_t inputIdx)
 	auto &input = instance.inputs.at(inputIdx);
 	visit(input.GetSocket().type, [&input, &val](auto tag) {
 		using T = typename decltype(tag)::type;
-		if constexpr(is_socket_type<T>() && !std::is_same_v<T, udm::String>) {
+		if constexpr(is_data_type<T>() && !std::is_same_v<T, udm::String>) {
 			T v;
 			if(!input.GetValue(v))
 				throw std::invalid_argument {"Failed to retrieve input value!"};
@@ -117,7 +117,7 @@ std::string Node::GetInputNameOrValue(const GraphNode &instance, const std::stri
 		throw std::invalid_argument {"No input named '" + std::string {inputName} + "' exists!"};
 	return GetInputNameOrValue(instance, it - m_inputs.begin());
 }
-Socket &Node::AddSocket(const std::string &name, SocketType type, float min, float max)
+Socket &Node::AddSocket(const std::string &name, DataType type, float min, float max)
 {
 	m_inputs.emplace_back(name, type);
 	auto &socket = m_inputs.back();

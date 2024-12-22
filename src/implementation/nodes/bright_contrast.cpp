@@ -19,11 +19,11 @@ using namespace pragma::shadergraph;
 
 BrightContrastNode::BrightContrastNode(const std::string_view &type) : Node {type}
 {
-	AddInput(IN_COLOR, SocketType::Color, Vector3 {0.f, 0.f, 0.f});
-	AddInput(IN_BRIGHT, SocketType::Float, 0.f);
-	AddInput(IN_CONTRAST, SocketType::Float, 0.f);
+	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
+	AddInput(IN_BRIGHT, DataType::Float, 0.f);
+	AddInput(IN_CONTRAST, DataType::Float, 0.f);
 
-	AddOutput(OUT_COLOR, SocketType::Color);
+	AddOutput(OUT_COLOR, DataType::Color);
 }
 
 std::string BrightContrastNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const

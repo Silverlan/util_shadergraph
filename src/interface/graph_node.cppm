@@ -47,7 +47,7 @@ export namespace pragma::shadergraph {
 		void ClearValue();
 		bool HasValue() const;
 	  private:
-		SocketValue value;
+		Value value;
 	};
 
 	class Graph;
