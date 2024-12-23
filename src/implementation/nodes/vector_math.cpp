@@ -30,14 +30,29 @@ VectorMathNode::VectorMathNode(const std::string_view &type) : Node {type}
 	AddModuleDependency("math");
 }
 
+static const char *get_output_name(pragma::shadergraph::VectorMathNode::Operation op)
+{
+	switch(op) {
+	case pragma::shadergraph::VectorMathNode::Operation::DotProduct:
+	case pragma::shadergraph::VectorMathNode::Operation::Distance:
+	case pragma::shadergraph::VectorMathNode::Operation::Length:
+		return pragma::shadergraph::VectorMathNode::OUT_VALUE;
+	}
+	return pragma::shadergraph::VectorMathNode::OUT_VECTOR;
+}
+
 std::string VectorMathNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 {
 	std::ostringstream code;
-	code << gn.GetGlslOutputDeclaration(OUT_VALUE) << " = ";
 	auto v1 = gn.GetInputNameOrValue(IN_VECTOR1);
 	auto v2 = gn.GetInputNameOrValue(IN_VECTOR2);
 	auto v3 = gn.GetInputNameOrValue(IN_VECTOR3);
 	auto op = *gn.GetConstantInputValue<Operation>(IN_OPERATION);
+
+	code << gn.GetGlslOutputDeclaration(OUT_VALUE) << " = 0.0;\n";
+	code << gn.GetGlslOutputDeclaration(OUT_VECTOR) << " = vec3(0.0, 0.0, 0.0);\n";
+
+	code << gn.GetOutputVarName(get_output_name(op)) << " = ";
 	switch(op) {
 	case Operation::Add:
 		code << v1 << " +" << v2;

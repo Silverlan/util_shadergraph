@@ -168,7 +168,7 @@ std::string MathNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 	auto constClamp = gn.GetConstantInputValue<bool>(IN_CLAMP);
 	if(!constClamp.has_value() || *constClamp) {
 		auto outVarName = gn.GetOutputVarName(OUT_VALUE);
-		code << outVarName << " = " << clamp << " ? clamp(" << outVarName << ", 0.0, 1.0) : " << outVarName << ";\n";
+		code << outVarName << " = (" << clamp << " > 0.5) ? clamp(" << outVarName << ", 0.0, 1.0) : " << outVarName << ";\n";
 	}
 	return code.str();
 }
