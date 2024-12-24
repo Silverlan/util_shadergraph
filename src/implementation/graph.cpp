@@ -395,7 +395,7 @@ bool Graph::Save(udm::AssetDataArg outData, std::string &outErr) const
 	return true;
 }
 
-void Graph::DoGenerateGlsl(std::ostream &outHeader, std::ostream &outBody, const std::optional<std::string> &namePrefix)
+void Graph::Resolve()
 {
 	// We can't use an iterator here because we need to expand nodes, which may add new nodes during iteration
 	size_t i = 0;
@@ -405,12 +405,14 @@ void Graph::DoGenerateGlsl(std::ostream &outHeader, std::ostream &outBody, const
 		++i;
 	}
 
+	for(size_t i = 0; i < m_nodes.size(); ++i)
+		m_nodes[i]->nodeIndex = i;
+}
+
+void Graph::DoGenerateGlsl(std::ostream &outHeader, std::ostream &outBody, const std::optional<std::string> &namePrefix)
+{
+	Resolve();
 	auto sortedNodes = TopologicalSort(m_nodes);
-
-	uint32_t nodeIndex = 0;
-	for(auto &node : sortedNodes)
-		node->nodeIndex = nodeIndex++;
-
 	std::unordered_set<std::string> requiredModules;
 	for(const auto &node : sortedNodes) {
 		for(const auto &dep : node->node.GetModuleDependencies())

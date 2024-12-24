@@ -44,6 +44,7 @@ export namespace pragma::shadergraph {
 		void DebugPrint();
 		void FindInvalidLinks();
 		void GenerateGlsl(std::ostream &outHeader, std::ostream &outBody, const std::optional<std::string> &namePrefix = {}) const;
+		void Resolve();
 		bool Load(udm::LinkedPropertyWrapper &prop, std::string &outErr);
 		bool Load(const std::string &filePath, std::string &outErr);
 		bool Save(udm::AssetDataArg outData, std::string &outErr) const;
