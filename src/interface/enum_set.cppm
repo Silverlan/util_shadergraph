@@ -15,7 +15,6 @@ module;
 
 export module pragma.shadergraph:enum_set;
 
-#pragma optimize("", off)
 export namespace pragma::shadergraph {
 	struct EnumSet {
 	  public:
@@ -26,8 +25,11 @@ export namespace pragma::shadergraph {
 			auto enumSet = std::make_unique<EnumSet>();
 			enumSet->m_nameToValue.reserve(names.size());
 			enumSet->m_valueToName.reserve(names.size());
-			for(size_t i = 0; i < names.size(); ++i)
+			for(size_t i = 0; i < names.size(); ++i) {
+				if(names[i] == "Count" || names[i] == "Invalid")
+					continue;
 				enumSet->insert(std::string {names[i]}, i);
+			}
 			return enumSet;
 		}
 		EnumSet() = default;
