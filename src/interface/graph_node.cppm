@@ -108,7 +108,7 @@ export namespace pragma::shadergraph {
 			auto it = std::find_if(nodeInputs.begin(), nodeInputs.end(), [&inputName](const Socket &socket) { return socket.name == inputName; });
 			if(it == nodeInputs.end())
 				return nullptr;
-			auto idx = it -nodeInputs.begin();
+			auto idx = it - nodeInputs.begin();
 			return &inputs[idx];
 		}
 
@@ -182,6 +182,9 @@ export namespace pragma::shadergraph {
 		std::string GetOutputVarName(size_t outputIdx) const;
 		std::string GetOutputVarName(const std::string_view &name) const;
 
+		const Vector2 &GetPos() const { return m_pos; }
+		void SetPos(const Vector2 &pos) { m_pos = pos; }
+
 		bool Save(udm::LinkedPropertyWrapper &prop) const;
 		bool LoadFromAssetData(udm::LinkedPropertyWrapper &prop, std::vector<SocketLink> &outLinks, std::string &outErr);
 
@@ -192,6 +195,7 @@ export namespace pragma::shadergraph {
 		std::optional<std::string> m_displayName {};
 	  private:
 		void SetName(const std::string &name) { m_name = name; }
+		Vector2 m_pos {};
 	};
 
 	template<typename T>

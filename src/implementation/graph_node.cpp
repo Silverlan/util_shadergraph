@@ -312,6 +312,7 @@ bool GraphNode::IsInputLinked(const std::string_view &name) const
 bool GraphNode::LoadFromAssetData(udm::LinkedPropertyWrapper &prop, std::vector<SocketLink> &outLinks, std::string &outErr)
 {
 	prop["displayName"] >> m_displayName;
+	prop["pos"] >> m_pos;
 
 	auto udmInputs = prop["inputs"];
 	auto numInputs = udmInputs.GetSize();
@@ -358,6 +359,7 @@ bool GraphNode::Save(udm::LinkedPropertyWrapper &prop) const
 	prop["name"] << m_name;
 	prop["type"] << node.GetType();
 	prop["displayName"] << m_displayName;
+	prop["pos"] << m_pos;
 
 	std::vector<const InputSocket *> assignedInputs;
 	assignedInputs.reserve(inputs.size());
