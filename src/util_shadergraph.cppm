@@ -21,6 +21,7 @@ export import :nodes.map_range_node;
 export import :nodes.mix;
 export import :nodes.rgb_to_bw;
 export import :nodes.separate_hsv;
+export import :nodes.sepia_tone;
 export import :nodes.value;
 export import :parameter;
 export import :socket;
