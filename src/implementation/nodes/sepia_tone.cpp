@@ -29,10 +29,14 @@ std::string SepiaToneNode::DoEvaluate(const Graph &graph, const GraphNode &gn) c
 	std::ostringstream code;
 	auto color = gn.GetInputNameOrValue(IN_COLOR);
 
-	// See https://stackoverflow.com/a/9449159
+	auto prefix = gn.GetBaseVarName() + "_";
+	auto gray = prefix + "gray";
+	code << "float " << gray << " = dot(" << color << ", vec3(0.3, 0.59, 0.11));\n";
 	code << gn.GetGlslOutputDeclaration(OUT_COLOR) << " = ";
-	code << "vec3(dot(" << color << ", vec3(0.393f, 0.769f, 0.189f)), ";
-	code << "dot(" << color << ", vec3(0.349f, 0.686f, 0.168f)), ";
-	code << "dot(" << color << ", vec3(0.272f, 0.534f, 0.131f)));\n";
+	code << "vec3(\n";
+	code << "\tmin(" << gray << " *0.393 + " << color << ".g *0.769 + " << color << ".b *0.189, 1.0),\n";
+	code << "\tmin(" << gray << " *0.349 + " << color << ".g *0.686 + " << color << ".b *0.168, 1.0),\n";
+	code << "\tmin(" << gray << " *0.272 + " << color << ".g *0.534 + " << color << ".b *0.131, 1.0)\n";
+	code << ");\n";
 	return code.str();
 }
