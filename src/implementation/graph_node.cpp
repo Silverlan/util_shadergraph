@@ -322,8 +322,11 @@ bool GraphNode::LoadFromAssetData(udm::LinkedPropertyWrapper &prop, std::vector<
 		udmInput["input"] >> inputName;
 
 		auto inputIdx = FindInputIndex(inputName);
-		if(!inputIdx)
-			return false;
+		if(!inputIdx) {
+			// This may happen if the input was removed from the node implementation.
+			// We'll just ignore the input value in this case.
+			continue;
+		}
 		auto *input = GetInput(*inputIdx);
 
 		auto udmValue = udmInput["value"];
