@@ -43,13 +43,15 @@ export namespace pragma::shadergraph {
 		std::string EvaluateResourceDeclarations(const Graph &graph, const GraphNode &instance) const;
 		template<typename TEnum>
 		    requires(std::is_enum_v<TEnum>)
-		void AddSocketEnum(const std::string &name, TEnum defaultVal)
+		void AddSocketEnum(const std::string &name, TEnum defaultVal, bool linkable = false)
 		{
 			m_inputs.emplace_back(name, DataType::Enum);
 			using T = std::underlying_type_t<TEnum>;
 			// static_assert(std::numeric_limits<T>::lowest() >= std::numeric_limits<udm::Int32>::lowest() && std::numeric_limits<T>::max() <= std::numeric_limits<udm::Int32>::max(), "Underlying enum type must be compatible with int32.");
 			m_inputs.back().defaultValue.Set(static_cast<udm::Int32>(defaultVal));
 			m_inputs.back().enumSet = EnumSet::Create<TEnum>();
+			if(linkable)
+				m_inputs.back().flags |= Socket::Flags::Linkable;
 		}
 		template<typename T>
 		Socket &AddSocket(const std::string &name, DataType type, T defaultVal, float min = 0.f, float max = 1.f);
