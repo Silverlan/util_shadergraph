@@ -17,7 +17,7 @@ import :nodes.rgb_to_bw;
 
 using namespace pragma::shadergraph;
 
-RgbToBwNode::RgbToBwNode(const std::string_view &type) : Node {type}
+RgbToBwNode::RgbToBwNode(const std::string_view &type) : Node {type, CATEGORY_COLOR}
 {
 	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 

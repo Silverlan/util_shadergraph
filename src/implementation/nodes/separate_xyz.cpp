@@ -17,7 +17,7 @@ import :nodes.separate_xyz;
 
 using namespace pragma::shadergraph;
 
-SeparateXyzNode::SeparateXyzNode(const std::string_view &type) : Node {type}
+SeparateXyzNode::SeparateXyzNode(const std::string_view &type) : Node {type, CATEGORY_VECTOR_MATH}
 {
 	AddInput(IN_VECTOR, DataType::Vector, Vector3 {0.f, 0.f, 0.f});
 

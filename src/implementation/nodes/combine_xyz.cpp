@@ -17,7 +17,7 @@ import :nodes.combine_xyz;
 
 using namespace pragma::shadergraph;
 
-CombineXyzNode::CombineXyzNode(const std::string_view &type) : Node {type}
+CombineXyzNode::CombineXyzNode(const std::string_view &type) : Node {type, CATEGORY_VECTOR_MATH}
 {
 	AddInput(IN_X, DataType::Float, 0.f);
 	AddInput(IN_Y, DataType::Float, 0.f);

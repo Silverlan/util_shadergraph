@@ -16,7 +16,7 @@ import :nodes.math;
 
 using namespace pragma::shadergraph;
 
-MathNode::MathNode(const std::string_view &type) : Node {type}
+MathNode::MathNode(const std::string_view &type) : Node {type, CATEGORY_MATH}
 {
 	AddSocketEnum<Operation>(IN_OPERATION, Operation::Add);
 	AddInput(IN_CLAMP, DataType::Boolean, false);

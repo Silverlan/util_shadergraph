@@ -17,7 +17,7 @@ import :nodes.invert;
 
 using namespace pragma::shadergraph;
 
-InvertNode::InvertNode(const std::string_view &type) : Node {type}
+InvertNode::InvertNode(const std::string_view &type) : Node {type, CATEGORY_COLOR}
 {
 	AddInput(IN_FAC, DataType::Float, 1.f);
 	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});

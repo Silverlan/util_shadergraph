@@ -17,7 +17,7 @@ import :nodes.bright_contrast;
 
 using namespace pragma::shadergraph;
 
-BrightContrastNode::BrightContrastNode(const std::string_view &type) : Node {type}
+BrightContrastNode::BrightContrastNode(const std::string_view &type) : Node {type, CATEGORY_COLOR}
 {
 	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 	AddInput(IN_BRIGHT, DataType::Float, 0.f);

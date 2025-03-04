@@ -17,7 +17,7 @@ import :nodes.sepia_tone;
 
 using namespace pragma::shadergraph;
 
-SepiaToneNode::SepiaToneNode(const std::string_view &type) : Node {type}
+SepiaToneNode::SepiaToneNode(const std::string_view &type) : Node {type, CATEGORY_COLOR}
 {
 	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 

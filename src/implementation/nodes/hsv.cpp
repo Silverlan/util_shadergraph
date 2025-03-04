@@ -17,7 +17,7 @@ import :nodes.hsv;
 
 using namespace pragma::shadergraph;
 
-HsvNode::HsvNode(const std::string_view &type) : Node {type}
+HsvNode::HsvNode(const std::string_view &type) : Node {type, CATEGORY_COLOR}
 {
 	AddInput(IN_HUE, DataType::Float, 0.5f);
 	AddInput(IN_SATURATION, DataType::Float, 1.f);

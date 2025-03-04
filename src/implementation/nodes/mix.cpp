@@ -19,7 +19,7 @@ import :nodes.mix;
 
 using namespace pragma::shadergraph;
 
-MixNode::MixNode(const std::string_view &type) : Node {type}
+MixNode::MixNode(const std::string_view &type) : Node {type, CATEGORY_MATH}
 {
 	AddSocketEnum<Type>(IN_TYPE, Type::Mix);
 	AddInput(IN_FAC, DataType::Float, 0.5f);

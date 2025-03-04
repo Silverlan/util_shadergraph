@@ -17,7 +17,7 @@ import :nodes.vector_math;
 
 using namespace pragma::shadergraph;
 
-VectorMathNode::VectorMathNode(const std::string_view &type) : Node {type}
+VectorMathNode::VectorMathNode(const std::string_view &type) : Node {type, CATEGORY_VECTOR_MATH}
 {
 	AddSocketEnum<Operation>(IN_OPERATION, Operation::Add);
 	AddInput(IN_VECTOR1, DataType::Vector, Vector3 {0.f, 0.f, 0.f});

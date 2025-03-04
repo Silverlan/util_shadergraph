@@ -18,7 +18,7 @@ import :nodes.emission;
 
 using namespace pragma::shadergraph;
 
-EmissionNode::EmissionNode(const std::string_view &type) : Node {type}
+EmissionNode::EmissionNode(const std::string_view &type) : Node {type, CATEGORY_SHADER}
 {
 	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 	AddInput(IN_EMISSION_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});

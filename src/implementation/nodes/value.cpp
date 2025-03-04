@@ -17,7 +17,7 @@ import :nodes.value;
 
 using namespace pragma::shadergraph;
 
-ValueNode::ValueNode(const std::string_view &type) : Node {type}
+ValueNode::ValueNode(const std::string_view &type) : Node {type, CATEGORY_MATH}
 {
 	AddSocket(CONST_VALUE, DataType::Float, 0.f);
 

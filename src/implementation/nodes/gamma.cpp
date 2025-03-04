@@ -17,7 +17,7 @@ import :nodes.gamma;
 
 using namespace pragma::shadergraph;
 
-GammaNode::GammaNode(const std::string_view &type) : Node {type}
+GammaNode::GammaNode(const std::string_view &type) : Node {type, CATEGORY_COLOR}
 {
 	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 	AddInput(IN_GAMMA, DataType::Float, 1.f, 0.f, 5.f);

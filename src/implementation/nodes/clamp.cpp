@@ -18,7 +18,7 @@ import :nodes.clamp;
 
 using namespace pragma::shadergraph;
 
-ClampNode::ClampNode(const std::string_view &type) : Node {type}
+ClampNode::ClampNode(const std::string_view &type) : Node {type, CATEGORY_MATH}
 {
 	AddSocketEnum<ClampType>(CONST_CLAMP_TYPE, ClampType::MinMax);
 

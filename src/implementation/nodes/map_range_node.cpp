@@ -17,7 +17,7 @@ import :nodes.map_range_node;
 
 using namespace pragma::shadergraph;
 
-MapRangeNode::MapRangeNode(const std::string_view &type) : Node {type}
+MapRangeNode::MapRangeNode(const std::string_view &type) : Node {type, CATEGORY_MATH}
 {
 	AddSocketEnum<Type>(CONST_TYPE, Type::Linear);
 

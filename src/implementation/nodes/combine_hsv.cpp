@@ -18,7 +18,7 @@ import :nodes.combine_hsv;
 
 using namespace pragma::shadergraph;
 
-CombineHsvNode::CombineHsvNode(const std::string_view &type) : Node {type}
+CombineHsvNode::CombineHsvNode(const std::string_view &type) : Node {type, CATEGORY_COLOR}
 {
 	AddInput(IN_H, DataType::Float, 0.f);
 	AddInput(IN_S, DataType::Float, 0.f);

@@ -21,16 +21,29 @@ export module pragma.shadergraph:node;
 import :socket;
 #pragma optimize("", off)
 export namespace pragma::shadergraph {
+	constexpr std::string_view CATEGORY_INPUT_PARAMETER = "input_parameter";
+	constexpr std::string_view CATEGORY_INPUT_SYSTEM = "input_system";
+	constexpr std::string_view CATEGORY_MATH = "math";
+	constexpr std::string_view CATEGORY_VECTOR_MATH = "vector_math";
+	constexpr std::string_view CATEGORY_COLOR = "color";
+	constexpr std::string_view CATEGORY_TEXTURE = "texture";
+	constexpr std::string_view CATEGORY_SHADER = "shader";
+	constexpr std::string_view CATEGORY_SCENE = "scene";
+	constexpr std::string_view CATEGORY_ENVIRONMENT = "environment";
+	constexpr std::string_view CATEGORY_OUTPUT = "output";
+	constexpr std::string_view CATEGORY_UTILITY = "utility";
+
 	class Graph;
 	struct GraphNode;
 	class Node {
 	  public:
-		Node(const std::string_view &type);
+		Node(const std::string_view &type, const std::string_view &category);
 		Node(const Node &) = delete;
 		Node &operator=(const Node &) = delete;
 		virtual ~Node();
 
 		const std::string_view &GetType() const;
+		const std::string_view &GetCategory() const;
 		std::string GetConstantValue(const GraphNode &instance, uint32_t inputIdx) const;
 		std::string GetConstantValue(const GraphNode &instance, const std::string_view &inputName) const;
 		std::string GetInputNameOrValue(const GraphNode &instance, uint32_t inputIdx) const;
@@ -74,6 +87,7 @@ export namespace pragma::shadergraph {
 		void AddModuleDependency(const std::string &name) { m_dependencies.push_back(name); }
 
 		std::string_view m_type;
+		std::string_view m_category;
 		std::vector<Socket> m_inputs;
 		std::vector<Socket> m_outputs;
 		std::vector<std::string> m_dependencies;

@@ -17,7 +17,7 @@ import :nodes.hsv;
 
 using namespace pragma::shadergraph;
 
-SeparateHsv::SeparateHsv(const std::string_view &type) : Node {type}
+SeparateHsv::SeparateHsv(const std::string_view &type) : Node {type, CATEGORY_COLOR}
 {
 	AddInput(IN_COLOR, DataType::Color, Vector3 {0.f, 0.f, 0.f});
 
