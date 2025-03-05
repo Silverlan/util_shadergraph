@@ -40,6 +40,7 @@ export namespace pragma::shadergraph {
 		bool RemoveNode(const std::string &name);
 		const std::vector<std::shared_ptr<GraphNode>> &GetNodes() const { return m_nodes; }
 		const std::shared_ptr<NodeRegistry> &GetNodeRegistry() const { return m_nodeRegistry; }
+		void Clear();
 		void Merge(const Graph &other);
 		void DebugPrint();
 		void FindInvalidLinks();

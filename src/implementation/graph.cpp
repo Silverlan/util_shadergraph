@@ -61,6 +61,11 @@ Graph::Graph(const Graph &other) : m_nodeRegistry {other.m_nodeRegistry} { Merge
 
 Graph::Graph(const std::shared_ptr<NodeRegistry> &nodeReg) : m_nodeRegistry {nodeReg} {}
 
+void Graph::Clear()
+{
+	m_nodes.clear();
+	m_nameToNodeIndex.clear();
+}
 void Graph::Merge(const Graph &other)
 {
 	m_nodes.reserve(m_nodes.size() + other.m_nodes.size());
