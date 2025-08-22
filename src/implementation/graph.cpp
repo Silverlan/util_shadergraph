@@ -17,7 +17,6 @@ module pragma.shadergraph;
 
 import :graph;
 import :nodes.math;
-#pragma optimize("", off)
 
 using namespace pragma::shadergraph;
 

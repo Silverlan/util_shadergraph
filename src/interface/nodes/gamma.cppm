@@ -9,7 +9,7 @@ module;
 export module pragma.shadergraph:nodes.gamma;
 
 import :node;
-#pragma optimize("", off)
+
 export namespace pragma::shadergraph {
 
 	class GammaNode : public Node {

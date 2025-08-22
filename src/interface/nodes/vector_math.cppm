@@ -10,7 +10,7 @@ module;
 export module pragma.shadergraph:nodes.vector_math;
 
 import :node;
-#pragma optimize("", off)
+
 export namespace pragma::shadergraph {
 
 	class VectorMathNode : public Node {

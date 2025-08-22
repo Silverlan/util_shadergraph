@@ -15,7 +15,7 @@ module;
 export module pragma.shadergraph:nodes.math;
 
 import :node;
-#pragma optimize("", off)
+
 export namespace pragma::shadergraph {
 
 	class MathNode : public Node {

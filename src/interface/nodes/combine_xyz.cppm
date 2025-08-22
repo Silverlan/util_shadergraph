@@ -9,7 +9,7 @@ module;
 export module pragma.shadergraph:nodes.combine_xyz;
 
 import :node;
-#pragma optimize("", off)
+
 export namespace pragma::shadergraph {
 
 	class CombineXyzNode : public Node {

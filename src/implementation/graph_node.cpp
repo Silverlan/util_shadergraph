@@ -14,7 +14,7 @@ module pragma.shadergraph;
 import :graph_node;
 
 using namespace pragma::shadergraph;
-#pragma optimize("", off)
+
 OutputSocket::OutputSocket(GraphNode &node, uint32_t index) : parent {&node}, outputIndex {index} {}
 const Socket &OutputSocket::GetSocket() const { return *parent->node.GetOutput(outputIndex); }
 

@@ -18,7 +18,6 @@ export module pragma.shadergraph:socket;
 
 import :parameter;
 
-#pragma optimize("", off)
 export namespace pragma::shadergraph {
 	struct Socket : Parameter {
 		enum class Flags : uint32_t {

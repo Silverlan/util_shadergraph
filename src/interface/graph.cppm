@@ -17,7 +17,7 @@ export module pragma.shadergraph:graph;
 import :node;
 import :node_registry;
 import :graph_node;
-#pragma optimize("", off)
+
 export namespace pragma::shadergraph {
 	class Graph {
 	  public:

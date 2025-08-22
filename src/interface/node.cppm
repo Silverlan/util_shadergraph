@@ -15,7 +15,7 @@ module;
 export module pragma.shadergraph:node;
 
 import :socket;
-#pragma optimize("", off)
+
 export namespace pragma::shadergraph {
 	constexpr std::string_view CATEGORY_INPUT_PARAMETER = "input_parameter";
 	constexpr std::string_view CATEGORY_INPUT_SYSTEM = "input_system";

@@ -16,7 +16,7 @@ export module pragma.shadergraph:graph_node;
 
 import :socket;
 import :node;
-#pragma optimize("", off)
+
 export namespace pragma::shadergraph {
 	struct GraphNode;
 	struct InputSocket;

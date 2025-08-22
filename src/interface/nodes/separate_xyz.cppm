@@ -9,7 +9,7 @@ module;
 export module pragma.shadergraph:nodes.separate_xyz;
 
 import :node;
-#pragma optimize("", off)
+
 export namespace pragma::shadergraph {
 
 	class SeparateXyzNode : public Node {
