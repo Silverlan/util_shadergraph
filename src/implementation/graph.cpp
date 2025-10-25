@@ -3,6 +3,9 @@
 
 module;
 
+#include <optional>
+#include <cassert>
+
 #include <memory>
 #include <string>
 #include <iostream>
@@ -11,7 +14,6 @@ module;
 #include <stdexcept>
 #include <unordered_set>
 #include <sstream>
-#include <udm.hpp>
 
 module pragma.shadergraph;
 

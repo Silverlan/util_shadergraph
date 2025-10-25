@@ -3,6 +3,10 @@
 
 module;
 
+#include <sharedutils/magic_enum.hpp>
+
+#include <cinttypes>
+
 #include <string>
 #include <string_view>
 #include <stdexcept>
@@ -10,9 +14,6 @@ module;
 #include <algorithm>
 #include <vector>
 #include <optional>
-#include <sharedutils/util_case_insensitive_hash.hpp>
-#include <sharedutils/magic_enum.hpp>
-#include <udm.hpp>
 
 module pragma.shadergraph;
 

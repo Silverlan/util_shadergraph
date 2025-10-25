@@ -7,12 +7,14 @@ module;
 #include <vector>
 #include <optional>
 #include <unordered_map>
-#include <udm.hpp>
-#include <udm_enums.hpp>
 #include <sstream>
+#include <algorithm>
 #include <cassert>
+#include <cinttypes>
 
 export module pragma.shadergraph:graph_node;
+
+export import pragma.udm;
 
 import :socket;
 import :node;

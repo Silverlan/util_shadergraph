@@ -3,13 +3,16 @@
 
 module;
 
+#include "sharedutils/magic_enum.hpp"
 #include <string_view>
 #include <string>
 #include <memory>
-#include <sharedutils/util_case_insensitive_hash.hpp>
-#include <sharedutils/magic_enum.hpp>
+#include <unordered_map>
 
 export module pragma.shadergraph:enum_set;
+
+export import pragma.string;
+export import pragma.util;
 
 export namespace pragma::shadergraph {
 	struct EnumSet {
@@ -56,10 +59,10 @@ export namespace pragma::shadergraph {
 				return std::nullopt;
 			return it->second;
 		}
-		const util::CIMap<int32_t> &getNameToValue() const { return m_nameToValue; }
+		const ustring::CIMap<int32_t> &getNameToValue() const { return m_nameToValue; }
 		const std::unordered_map<int32_t, std::string> &getValueToName() const { return m_valueToName; }
 	  private:
-		util::CIMap<int32_t> m_nameToValue;
+		ustring::CIMap<int32_t> m_nameToValue;
 		std::unordered_map<int32_t, std::string> m_valueToName;
 	};
 };

@@ -5,11 +5,10 @@ module;
 
 #include <string>
 #include <unordered_map>
-#include <udm.hpp>
-#include <udm_types.hpp>
 #include <queue>
 #include <stdexcept>
 #include <iostream>
+#include <memory>
 
 export module pragma.shadergraph:node_registry;
 

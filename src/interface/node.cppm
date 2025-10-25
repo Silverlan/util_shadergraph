@@ -7,15 +7,13 @@ module;
 #include <vector>
 #include <optional>
 #include <unordered_map>
-#include <udm.hpp>
-#include <udm_enums.hpp>
 #include <sstream>
 #include <cassert>
+#include <cinttypes>
 
 export module pragma.shadergraph:node;
 
 import :socket;
-
 export namespace pragma::shadergraph {
 	constexpr std::string_view CATEGORY_INPUT_PARAMETER = "input_parameter";
 	constexpr std::string_view CATEGORY_INPUT_SYSTEM = "input_system";
