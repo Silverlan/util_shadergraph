@@ -4,10 +4,6 @@
 module;
 
 #include "sharedutils/magic_enum.hpp"
-#include <string_view>
-#include <string>
-#include <memory>
-#include <unordered_map>
 
 export module pragma.shadergraph:enum_set;
 

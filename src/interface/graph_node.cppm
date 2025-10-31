@@ -3,14 +3,7 @@
 
 module;
 
-#include <string>
-#include <vector>
-#include <optional>
-#include <unordered_map>
-#include <sstream>
-#include <algorithm>
 #include <cassert>
-#include <cinttypes>
 
 export module pragma.shadergraph:graph_node;
 

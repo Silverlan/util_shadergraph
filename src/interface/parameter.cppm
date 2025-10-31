@@ -3,15 +3,7 @@
 
 module;
 
-#include <string>
-#include <vector>
-#include <optional>
-#include <memory>
-#include <unordered_map>
-#include <sstream>
 #include <cassert>
-#include <typeinfo>
-#include <variant>
 
 export module pragma.shadergraph:parameter;
 

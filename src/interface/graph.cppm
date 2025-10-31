@@ -3,14 +3,6 @@
 
 module;
 
-#include <string>
-#include <unordered_map>
-#include <queue>
-#include <stdexcept>
-#include <sstream>
-#include <iostream>
-#include <memory>
-#include <optional>
 
 export module pragma.shadergraph:graph;
 

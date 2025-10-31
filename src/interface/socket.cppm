@@ -3,14 +3,7 @@
 
 module;
 
-#include <string>
-#include <vector>
-#include <optional>
-#include <memory>
-#include <unordered_map>
-#include <sstream>
 #include <cassert>
-#include <typeinfo>
 
 export module pragma.shadergraph:socket;
 

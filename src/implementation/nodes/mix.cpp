@@ -4,8 +4,6 @@
 module;
 
 #include "sharedutils/magic_enum.hpp"
-#include <string_view>
-#include <sstream>
 
 module pragma.shadergraph;
 

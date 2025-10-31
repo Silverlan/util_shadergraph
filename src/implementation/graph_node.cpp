@@ -3,15 +3,9 @@
 
 module;
 
-#include <optional>
 
-#include <cinttypes>
-#include <vector>
-#include <algorithm>
 
-#include <string>
 #include <cassert>
-#include <stdexcept>
 
 module pragma.shadergraph;
 

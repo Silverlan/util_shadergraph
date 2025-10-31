@@ -3,11 +3,7 @@
 
 module;
 
-#include <string>
-#include <string_view>
-#include <stdexcept>
 #include <cassert>
-#include <memory>
 
 module pragma.shadergraph;
 

@@ -5,15 +5,7 @@ module;
 
 #include <sharedutils/magic_enum.hpp>
 
-#include <cinttypes>
 
-#include <string>
-#include <string_view>
-#include <stdexcept>
-#include <typeinfo>
-#include <algorithm>
-#include <vector>
-#include <optional>
 
 module pragma.shadergraph;
 

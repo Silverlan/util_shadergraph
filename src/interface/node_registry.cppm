@@ -3,12 +3,6 @@
 
 module;
 
-#include <string>
-#include <unordered_map>
-#include <queue>
-#include <stdexcept>
-#include <iostream>
-#include <memory>
 
 export module pragma.shadergraph:node_registry;
 
