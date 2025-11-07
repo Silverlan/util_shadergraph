@@ -3,7 +3,6 @@
 
 module;
 
-#include "sharedutils/magic_enum.hpp"
 
 export module pragma.shadergraph:enum_set;
 
