@@ -3,13 +3,6 @@
 
 module;
 
-#include <string>
-#include <vector>
-#include <optional>
-#include <unordered_map>
-#include <udm.hpp>
-#include <udm_enums.hpp>
-#include <sstream>
 #include <cassert>
 
 export module pragma.shadergraph:nodes.math;

@@ -3,20 +3,12 @@
 
 module;
 
-#include <string>
-#include <vector>
-#include <optional>
-#include <memory>
-#include <unordered_map>
-#include <udm.hpp>
-#include <udm_enums.hpp>
-#include <sstream>
 #include <cassert>
-#include <typeinfo>
 
 export module pragma.shadergraph:parameter;
 
 import :enum_set;
+export import pragma.udm;
 
 export namespace pragma::shadergraph {
 	enum class DataType : uint8_t {

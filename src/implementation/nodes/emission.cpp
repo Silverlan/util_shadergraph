@@ -3,11 +3,6 @@
 
 module;
 
-#include <string_view>
-#include <sstream>
-#include <cinttypes>
-#include <mathutil/uvec.h>
-
 module pragma.shadergraph;
 
 import :nodes.emission;

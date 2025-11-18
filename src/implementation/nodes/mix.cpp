@@ -3,12 +3,6 @@
 
 module;
 
-#include <string_view>
-#include <sstream>
-#include <sharedutils/util_string.h>
-#include <sharedutils/magic_enum.hpp>
-#include <mathutil/uvec.h>
-
 module pragma.shadergraph;
 
 import :nodes.mix;

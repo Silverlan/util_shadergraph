@@ -3,16 +3,7 @@
 
 module;
 
-#include <string>
-#include <vector>
-#include <optional>
-#include <memory>
-#include <unordered_map>
-#include <udm.hpp>
-#include <udm_enums.hpp>
-#include <sstream>
 #include <cassert>
-#include <typeinfo>
 
 export module pragma.shadergraph:socket;
 
@@ -31,5 +22,11 @@ export namespace pragma::shadergraph {
 		bool IsLinkable() const { return umath::is_flag_set(flags, Flags::Linkable); }
 		~Socket();
 	};
+	using namespace umath::scoped_enum::bitwise;
 };
-export {REGISTER_BASIC_BITWISE_OPERATORS(pragma::shadergraph::Socket::Flags)};
+export {
+	namespace umath::scoped_enum::bitwise {
+		template<>
+		struct enable_bitwise_operators<pragma::shadergraph::Socket::Flags> : std::true_type {};
+	}
+}

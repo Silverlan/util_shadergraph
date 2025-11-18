@@ -3,10 +3,6 @@
 
 module;
 
-#include <string_view>
-#include <sstream>
-#include <mathutil/uvec.h>
-
 module pragma.shadergraph;
 
 import :nodes.map_range_node;

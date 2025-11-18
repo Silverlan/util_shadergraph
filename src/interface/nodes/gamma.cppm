@@ -3,9 +3,6 @@
 
 module;
 
-#include <string_view>
-#include <string>
-
 export module pragma.shadergraph:nodes.gamma;
 
 import :node;

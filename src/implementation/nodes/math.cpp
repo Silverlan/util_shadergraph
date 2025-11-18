@@ -3,9 +3,6 @@
 
 module;
 
-#include <string_view>
-#include <sstream>
-
 module pragma.shadergraph;
 
 import :nodes.math;

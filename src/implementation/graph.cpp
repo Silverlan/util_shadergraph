@@ -3,15 +3,7 @@
 
 module;
 
-#include <memory>
-#include <string>
-#include <iostream>
-#include <queue>
-#include <unordered_map>
-#include <stdexcept>
-#include <unordered_set>
-#include <sstream>
-#include <udm.hpp>
+#include <cassert>
 
 module pragma.shadergraph;
 

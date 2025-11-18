@@ -3,10 +3,6 @@
 
 module;
 
-#include <cinttypes>
-#include <string_view>
-#include <string>
-
 export module pragma.shadergraph:nodes.vector_math;
 
 import :node;
