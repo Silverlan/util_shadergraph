@@ -3,9 +3,6 @@
 
 module;
 
-
-
-
 module pragma.shadergraph;
 
 import :node;

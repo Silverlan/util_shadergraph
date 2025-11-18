@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.shadergraph:nodes.rgb_to_bw;
 
 import :node;

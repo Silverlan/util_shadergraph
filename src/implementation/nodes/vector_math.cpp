@@ -3,7 +3,6 @@
 
 module;
 
-
 module pragma.shadergraph;
 
 import :nodes.vector_math;

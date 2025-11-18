@@ -5,7 +5,6 @@ module;
 
 #include <cassert>
 
-
 module pragma.shadergraph;
 
 import :graph;

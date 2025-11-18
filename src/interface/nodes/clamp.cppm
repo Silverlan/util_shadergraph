@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.shadergraph:nodes.clamp;
 
 import :node;

@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.shadergraph:enum_set;
 
 export import pragma.string;

@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.shadergraph:nodes.combine_xyz;
 
 import :node;

@@ -3,7 +3,6 @@
 
 module;
 
-
 export module pragma.shadergraph:node_registry;
 
 import :node;
