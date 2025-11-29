@@ -3,6 +3,8 @@
 
 module;
 
+#include "util_enum_flags.hpp"
+
 #include <cassert>
 
 export module pragma.shadergraph:socket;
@@ -25,8 +27,5 @@ export namespace pragma::shadergraph {
 	using namespace umath::scoped_enum::bitwise;
 };
 export {
-	namespace umath::scoped_enum::bitwise {
-		template<>
-		struct enable_bitwise_operators<pragma::shadergraph::Socket::Flags> : std::true_type {};
-	}
+	REGISTER_ENUM_FLAGS(pragma::shadergraph::Socket::Flags)
 }
