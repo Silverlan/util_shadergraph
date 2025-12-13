@@ -58,7 +58,7 @@ export namespace pragma::shadergraph {
 		case udm::Type::Mat4:
 			return DataType::Transform;
 		}
-		static_assert(umath::to_integral(DataType::Count) == 15, "Update the list above when adding new types!");
+		static_assert(math::to_integral(DataType::Count) == 15, "Update the list above when adding new types!");
 		return DataType::Invalid;
 	}
 
@@ -92,7 +92,7 @@ export namespace pragma::shadergraph {
 		case DataType::Transform:
 			return udm::Type::Mat4;
 		}
-		static_assert(umath::to_integral(DataType::Count) == 15, "Update the list above when adding new types!");
+		static_assert(math::to_integral(DataType::Count) == 15, "Update the list above when adding new types!");
 		return udm::Type::Invalid;
 	}
 
@@ -126,7 +126,7 @@ export namespace pragma::shadergraph {
 		case DataType::String:
 			return nullptr;
 		}
-		static_assert(umath::to_integral(DataType::Count) == 15, "Update the list above when adding new types!");
+		static_assert(math::to_integral(DataType::Count) == 15, "Update the list above when adding new types!");
 		return nullptr;
 	}
 
@@ -162,14 +162,14 @@ export namespace pragma::shadergraph {
 		case DataType::Transform:
 			return udm::tag<udm::Mat4>;
 		}
-		static_assert(umath::to_integral(DataType::Count) == 15, "Update the list above when adding new types!");
+		static_assert(math::to_integral(DataType::Count) == 15, "Update the list above when adding new types!");
 		return {};
 	}
 
 	template<typename T>
 	constexpr bool is_data_type()
 	{
-		static_assert(umath::to_integral(DataType::Count) == 15, "Update this list when adding new types!");
+		static_assert(math::to_integral(DataType::Count) == 15, "Update this list when adding new types!");
 		return std::is_same_v<T, udm::Boolean> || std::is_same_v<T, udm::Int32> || std::is_same_v<T, udm::UInt32> || std::is_same_v<T, udm::UInt64> || std::is_same_v<T, udm::Float> || std::is_same_v<T, udm::UInt16> || std::is_same_v<T, udm::Half> || std::is_same_v<T, udm::Vector3>
 		  || std::is_same_v<T, udm::Vector4> || std::is_same_v<T, udm::Vector2> || std::is_same_v<T, udm::String> || std::is_same_v<T, udm::Mat4>;
 	}
@@ -178,7 +178,7 @@ export namespace pragma::shadergraph {
 	{
 		if(a == b)
 			return true;
-		static_assert(umath::to_integral(DataType::Count) == 15, "Update this list when adding new types!");
+		static_assert(math::to_integral(DataType::Count) == 15, "Update this list when adding new types!");
 		switch(a) {
 		case DataType::Boolean:
 		case DataType::Int:
@@ -274,7 +274,7 @@ export namespace pragma::shadergraph {
 		bool Set(const T &val)
 		{
 			if constexpr(std::is_enum_v<T>)
-				return Set(umath::to_integral(val));
+				return Set(math::to_integral(val));
 			return visit(m_type, [this, &val](auto tag) {
 				using TFrom = decltype(val);
 				using TTo = typename decltype(tag)::type;

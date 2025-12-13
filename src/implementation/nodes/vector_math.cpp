@@ -22,15 +22,15 @@ VectorMathNode::VectorMathNode(const std::string_view &type) : Node {type, CATEG
 	AddModuleDependency("math");
 }
 
-static const char *get_output_name(pragma::shadergraph::VectorMathNode::Operation op)
+static const char *get_output_name(VectorMathNode::Operation op)
 {
 	switch(op) {
-	case pragma::shadergraph::VectorMathNode::Operation::DotProduct:
-	case pragma::shadergraph::VectorMathNode::Operation::Distance:
-	case pragma::shadergraph::VectorMathNode::Operation::Length:
-		return pragma::shadergraph::VectorMathNode::OUT_VALUE;
+	case VectorMathNode::Operation::DotProduct:
+	case VectorMathNode::Operation::Distance:
+	case VectorMathNode::Operation::Length:
+		return VectorMathNode::OUT_VALUE;
 	}
-	return pragma::shadergraph::VectorMathNode::OUT_VECTOR;
+	return VectorMathNode::OUT_VECTOR;
 }
 
 std::string VectorMathNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const

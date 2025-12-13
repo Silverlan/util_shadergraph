@@ -31,7 +31,7 @@ std::string MixNode::DoEvaluate(const Graph &graph, const GraphNode &gn) const
 	auto fac = gn.GetInputNameOrValue(IN_FAC);
 	auto type = *gn.GetConstantInputValue<Type>(IN_TYPE);
 	std::string opName {magic_enum::enum_name(type)};
-	opName = ustring::to_snake_case(opName);
+	opName = string::to_snake_case(opName);
 	opName += "_color";
 	code << opName << "(" << c1 << ", " << c2 << ", " << fac << ");\n";
 

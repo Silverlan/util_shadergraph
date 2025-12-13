@@ -21,10 +21,10 @@ export namespace pragma::shadergraph {
 
 		Socket(const std::string &name, DataType type);
 		Socket(const Socket &other);
-		bool IsLinkable() const { return umath::is_flag_set(flags, Flags::Linkable); }
+		bool IsLinkable() const { return math::is_flag_set(flags, Flags::Linkable); }
 		~Socket();
 	};
-	using namespace umath::scoped_enum::bitwise;
+	using namespace pragma::math::scoped_enum::bitwise;
 };
 export {
 	REGISTER_ENUM_FLAGS(pragma::shadergraph::Socket::Flags)

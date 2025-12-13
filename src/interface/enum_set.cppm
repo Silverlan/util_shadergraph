@@ -53,10 +53,10 @@ export namespace pragma::shadergraph {
 				return std::nullopt;
 			return it->second;
 		}
-		const ustring::CIMap<int32_t> &getNameToValue() const { return m_nameToValue; }
+		const string::CIMap<int32_t> &getNameToValue() const { return m_nameToValue; }
 		const std::unordered_map<int32_t, std::string> &getValueToName() const { return m_valueToName; }
 	  private:
-		ustring::CIMap<int32_t> m_nameToValue;
+		string::CIMap<int32_t> m_nameToValue;
 		std::unordered_map<int32_t, std::string> m_valueToName;
 	};
 };
