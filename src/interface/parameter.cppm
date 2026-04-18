@@ -235,13 +235,13 @@ export namespace pragma::shadergraph {
 		if constexpr(std::is_same_v<T, udm::Boolean>)
 			return value ? "1.0" : "0.0";
 		else if constexpr(std::is_same_v<T, udm::Int32> || std::is_same_v<T, udm::UInt32> || std::is_same_v<T, udm::UInt64> || std::is_same_v<T, udm::Float>)
-			return std::to_string(value);
+			return util::to_string(value);
 		else if constexpr(std::is_same_v<T, udm::Half>)
-			return std::to_string(static_cast<float>(value));
+			return util::to_string(static_cast<float>(value));
 		else if constexpr(std::is_same_v<T, udm::Vector3>)
-			return "vec3(" + std::to_string(value.x) + ", " + std::to_string(value.y) + ", " + std::to_string(value.z) + ")";
+			return "vec3(" + util::to_string(value.x) + ", " + util::to_string(value.y) + ", " + util::to_string(value.z) + ")";
 		else if constexpr(std::is_same_v<T, udm::Vector2>)
-			return "vec2(" + std::to_string(value.x) + ", " + std::to_string(value.y) + ")";
+			return "vec2(" + util::to_string(value.x) + ", " + util::to_string(value.y) + ")";
 		throw std::invalid_argument {"Socket type '" + std::string {typeid(T).name()} + "' cannot be converted to GLSL!"};
 		return {};
 	}

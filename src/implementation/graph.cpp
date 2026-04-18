@@ -133,7 +133,7 @@ void Graph::AddNode(const std::shared_ptr<GraphNode> &node)
 	std::string name {(*node)->GetType()};
 	size_t i = 1;
 	for(;;) {
-		auto namei = name + std::to_string(i);
+		auto namei = name + util::to_string(i);
 		if(m_nameToNodeIndex.find(namei) == m_nameToNodeIndex.end()) {
 			name = std::move(namei);
 			break;
